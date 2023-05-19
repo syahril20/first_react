@@ -8,7 +8,7 @@ function Head() {
       <div className="mt-10">
         <p className="text-white text-lg">Find great places to holiday</p>
         <div>
-          <input type="text" className="rounded-l-lg w-[1050px] border-none" />
+          <input type="text" className="rounded-l-lg w-[1050px] border-none h-10" />
           <button className="rounded-r-lg px-5 py-2 text-white bg-[#FFAF00]">
             Search
           </button>
