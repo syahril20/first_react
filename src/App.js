@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import Home from "./views/home";
 import Detail from "./views/tourDetail";
 import Image from "./assets/background.png";
@@ -6,6 +12,23 @@ import BackgroundBlur from "./assets/BackgroundBLur.png";
 import NotFound from "./views/notFound";
 import Nav from "./comp/navbar";
 import Footer from "./comp/footer";
+
+const login = JSON.parse(localStorage.getItem("login"));
+console.log(login, "app");
+const ProtectedRoute = ({ isUser, redirectPath = "/" }) => {
+  if (!isUser) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return <Outlet />;
+};
+const ProtectedRoute2 = ({ isAdmin, redirectPath = "/" }) => {
+  if (!isAdmin) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return <Outlet />;
+};
 function App() {
   return (
     <>
@@ -28,26 +51,100 @@ function App() {
           />
           <Route
             exact
-            path="/d"
+            path="/detail/:id"
             element={
               <Detail
                 p={<img src={BackgroundBlur} alt="hehe" />}
                 f={<Footer isHome={true} />}
-                isPayment={false}
+                pages="detail"
+              />
+            }
+          />
+          {/* Users Private*/}
+          <Route element={<ProtectedRoute isUser={login?.isUser} />}>
+            <Route
+              path="/"
+              element={
+                <Home
+                  p={
+                    <div className="filter brightness-75">
+                      <img src={Image} alt="hehe" />
+                    </div>
+                  }
+                />
+              }
+            />
+            <Route path="/profile" element={<Detail
+                  p={<img src={BackgroundBlur} alt="hehe" />}
+                  f={<Footer isHome={true} />}
+                  pages="profile"
+                />} />
+            <Route
+              exact
+              path="/pay"
+              element={
+                <Detail
+                  p={<img src={BackgroundBlur} alt="hehe" />}
+                  f={<Footer isHome={true} />}
+                  pages="pay"
+                />
+              }
+            />
+            <Route
+            exact
+            path="/payment/:id"
+            element={
+              <Detail
+                p={<img src={BackgroundBlur} alt="hehe" />}
+                f={<Footer isHome={true} />}
+                pages="payment"
+              />
+            }
+          />
+          </Route>
+
+
+          {/* ADMIN */}
+          <Route element={<ProtectedRoute2 isAdmin={login?.isAdmin} />}>
+          <Route
+            exact
+            path="/admin"
+            element={
+              <Detail
+                p={<img src={BackgroundBlur} alt="hehe" />}
+                f={<Footer isHome={true} />}
+                pages="admin"
               />
             }
           />
           <Route
             exact
-            path="/payment"
+            path="/in-trip"
             element={
               <Detail
                 p={<img src={BackgroundBlur} alt="hehe" />}
                 f={<Footer isHome={true} />}
-                isPayment={true}
+                pages="inTrip"
               />
             }
           />
+          <Route
+            exact
+            path="/add-trip"
+            element={
+              <Detail
+                p={<img src={BackgroundBlur} alt="hehe" />}
+                f={<Footer isHome={true} />}
+                pages="addTrip"
+              />
+            }
+          />
+        </Route>
+          
+          
+          
+
+          {/* NOTFOUND */}
           <Route
             exact
             path="*"

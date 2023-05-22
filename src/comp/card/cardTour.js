@@ -1,18 +1,31 @@
 // import CardDetail from './cardDetail'
+const login = JSON.parse(localStorage.getItem("login"));
+console.log(login, "CardTour");
+
 function Card(props) {
   return (
     <div className="flex flex-col items-center relative">
       <div className="bg-white p-3 rounded">
-        <img src={props.img} className="w-[328px] h-[241px]" alt="waw"/>
+        <img src={props.img} className="w-[328px] h-[241px]" alt="waw" />
 
         <p className="bg-white absolute rounded-l-lg w-[60px] py-1 top-5 left-[280px] flex justify-center">
           {props.pages}
         </p>
 
-        {props.type === "motto" ? (
-          <a href="/d" className="mt-5 text-2xl font-bold ">{props.title}</a>
+        {props.isTrip === true ? (
+          <p className="text-2xl font-semibold mt-5">{props.title}</p>
+        ) : login?.isAdmin === true ? (
+          <a
+          href={`/in-trip`}
+          className="text-2xl font-semibold cursor-pointer mt-5"
+        >
+          {props.title}
+        </a>
         ) : (
-          <a href="/d" className="text-2xl font-semibold cursor-pointer mt-5">
+          <a
+            href={`/detail/${props.id}`}
+            className="text-2xl font-semibold cursor-pointer mt-5"
+          >
             {props.title}
           </a>
         )}

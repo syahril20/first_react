@@ -1,189 +1,230 @@
 import image from "../assets/Icon.png";
+import profil from "../assets/Avatar.png";
 import Register from "./modals/register";
 import Login from "./modals/login";
+import logoutIcon from "../assets/logout.png";
+import payIcon from "../assets/bill.png";
+import profileIcon from "../assets/user.png";
+import Jour from "../assets/journey.png"
+import { useEffect, useState, Fragment } from "react";
 
-
-import React from "react";
 import {
-  Navbar,
-  Typography,
   Button,
   Menu,
   MenuHandler,
   MenuList,
-  MenuItem,
   Avatar,
 } from "@material-tailwind/react";
-import {
-  UserCircleIcon,
-  ChevronDownIcon,
-  Cog6ToothIcon,
-  InboxArrowDownIcon,
-  LifebuoyIcon,
-  PowerIcon,
-} from "@heroicons/react/24/outline";
- 
-// profile menu component
-const profileMenuItems = [
-  {
-    label: "My Profile",
-    icon: UserCircleIcon,
-  },
-  {
-    label: "Edit Profile",
-    icon: Cog6ToothIcon,
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-  },
-  {
-    label: "Help",
-    icon: LifebuoyIcon,
-  },
-  {
-    label: "Sign Out",
-    icon: PowerIcon,
-  },
-];
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+const login = JSON.parse(localStorage.getItem("login"));
+export default function Nav() {
+  const Navi = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [logOpen, setLogOpen] = useState(false);
+  const [regOpen, setRegOpen] = useState(false);
 
-function ProfileMenu() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const closeMenu = () => setIsMenuOpen(false);
- 
-  return (
-    <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
-      <MenuHandler>
-        <Button
-          variant="text"
-          color="blue-gray"
-          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
-        >
-          <Avatar
-            variant="circular"
-            size="sm"
-            alt="candice wu"
-            className="border border-blue-500 p-0.5"
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-          />
-          <ChevronDownIcon
-            strokeWidth={2.5}
-            className={`h-3 w-3 transition-transform ${
-              isMenuOpen ? "rotate-180" : ""
-            }`}
-          />
-        </Button>
-      </MenuHandler>
-      <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon }, key) => {
-          const isLastItem = key === profileMenuItems.length - 1;
-          return (
-            <MenuItem
-              key={label}
-              onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
-              }`}
-            >
-              {React.createElement(icon, {
-                className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                strokeWidth: 2,
-              })}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? "red" : "inherit"}
-              >
-                {label}
-              </Typography>
-            </MenuItem>
-          );
-        })}
-      </MenuList>
-    </Menu>
-  );
-}
- 
+  const [logins, setLogins] = useState({});
 
- 
-
-
-
- 
-function Navs() {
-  return (
-    <Navbar className="mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6">
-      <div className="relative mx-auto flex items-center text-blue-gray-900">
-        
-        <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block">
-          
-        </div>
-        
-        <ProfileMenu />
-      </div>
-      
-    </Navbar>
-  );
-}
-
-
-export default function Nav(props) {
-  const [logOpen, setLogOpen] = React.useState(false);
-  const [regOpen, setRegOpen] = React.useState(false);
   const handleLogin = () => {
     setLogOpen((log) => !log);
-    setRegOpen(false);
   };
   const handleRegister = () => {
     setRegOpen((reg) => !reg);
     setLogOpen(false);
   };
+
+  useEffect(() => {
+    
+    if (login) {
+      setLogins(login);
+    }
+  }, []);
+  // console.log(logins, "Navbar");
+
+  const handleLogout = () => {
+    localStorage.removeItem("login");
+    window.location.reload();
+  };
+
   return (
     <div className="absolute z-10 w-full">
-    <div>
-      <div className="z-20 flex items-center justify-between w-full px-20 bg-cover">
-        <div id="left-nav" className="filter brightness-125">
-          <a href="/">
-            <img src={image} alt="me" />
-          </a>
-        </div>
-        <div id="right-nav" className="flex items-center">
-          <div className="">
+      <div>
+        <div className="z-20 flex items-center justify-between w-full px-20 bg-cover">
+          <div id="left-nav" className="filter brightness-125">
 
-            <React.Fragment>
-              <div>
-                {/* LOGIN BUTTON */}
-                <button
-                  onClick={handleLogin}
-                  className="text-white font-semibold border border-white rounded px-6 py-1"
-                >
-                  Login
-                </button>
+            <a href={login?.isAdmin ? "/admin" : "/"}>
+              <img src={image} alt="me" />
+            </a>
+          </div>
+          <div id="right-nav" className="flex items-center">
+            <div className="">
+              <Fragment>
+                {logins?.isUser ? (
+                  <div className="relative mx-auto flex items-center text-blue-gray-900">
+                    <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block"></div>
 
-                {/* REGISTER BUTTON */}
-                <button
-                  onClick={handleRegister}
-                  className="text-white font-semibold border border-[#FFAF00] rounded px-6 py-1 ml-2 bg-[#FFAF00]"
-                >
-                  Register
-                </button>
-              </div>
+                    <Menu
+                      open={isMenuOpen}
+                      handler={setIsMenuOpen}
+                      placement="bottom-end"
+                    >
+                      <MenuHandler>
+                        <Button
+                          variant="text"
+                          color="blue-gray"
+                          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+                        >
+                          <Avatar
+                            variant="circular"
+                            size="sm"
+                            alt="candice wu"
+                            className=""
+                            src={profil}
+                          />
+                          <ChevronDownIcon
+                            strokeWidth={2.5}
+                            className={`h-3 w-3 transition-transform ${
+                              isMenuOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </Button>
+                      </MenuHandler>
+                      <MenuList className="flex flex-col gap-2 justify-start">
+                        <div className="flex">
+                          <button
+                            onClick={() => {
+                              Navi("/profile");
+                            }}
+                            className="flex items-center gap-4"
+                          >
+                            <img src={profileIcon} alt="waw" />
+                            <p className="font-bold text-black text-base">
+                              Profile
+                            </p>
+                          </button>
+                        </div>
+                        <div className="flex">
+                          <button
+                            onClick={() => {
+                              Navi("/pay");
+                            }}
+                            className="flex items-center gap-4"
+                          >
+                            <img src={payIcon} alt="waw" />
+                            <p className="font-bold text-black text-base">
+                              Pay
+                            </p>
+                          </button>
+                        </div>
+                        <div className="border border-black w-full" />
+                        <div className="flex">
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-4"
+                          >
+                            <img src={logoutIcon} alt="waw" />
+                            <p className="font-bold text-black text-base">
+                              Logout
+                            </p>
+                          </button>
+                        </div>
+                      </MenuList>
+                    </Menu>
+                  </div>
+                ) : logins.isAdmin ? (
+                  <div className="relative mx-auto flex items-center text-blue-gray-900">
+                    <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block"></div>
 
-              {/* MODALS LOGIN */}
-              <Login logOpen={logOpen} handleLogin={handleLogin} handleRegister={handleRegister}/>
+                    <Menu
+                      open={isMenuOpen}
+                      handler={setIsMenuOpen}
+                      placement="bottom-end"
+                    >
+                      <MenuHandler>
+                        <Button
+                          variant="text"
+                          color="blue-gray"
+                          className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+                        >
+                          <Avatar
+                            variant="circular"
+                            size="sm"
+                            alt="candice wu"
+                            className=""
+                            src={profil}
+                          />
+                          <ChevronDownIcon
+                            strokeWidth={2.5}
+                            className={`h-3 w-3 transition-transform ${
+                              isMenuOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </Button>
+                      </MenuHandler>
+                      <MenuList className="flex flex-col gap-2 justify-start">
+                        <div className="flex">
+                          <button
+                            onClick={() => {
+                              Navi("/in-trip");
+                            }}
+                            className="flex items-center gap-4"
+                          >
+                            <img src={Jour} alt="waw" />
+                            <p className="font-bold text-black text-base">
+                              Trip
+                            </p>
+                          </button>
+                        </div>
+                        <div className="border border-black w-full" />
+                        <div className="flex">
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-4"
+                          >
+                            <img src={logoutIcon} alt="waw" />
+                            <p className="font-bold text-black text-base">
+                              Logout
+                            </p>
+                          </button>
+                        </div>
+                      </MenuList>
+                    </Menu>
+                  </div>
+                ) : (
+                  <div>
+                    {/* LOGIN BUTTON */}
+                    <button
+                      onClick={handleLogin}
+                      className="text-white font-semibold border border-white rounded px-6 py-1"
+                    >
+                      Login
+                    </button>
 
-              {/* MODALS REGISTER */}
-              <Register regOpen={regOpen} handleRegister={handleRegister}/>
-            </React.Fragment>
+                    {/* REGISTER BUTTON */}
+                    <button
+                      onClick={handleRegister}
+                      className="text-white font-semibold border border-[#FFAF00] rounded px-6 py-1 ml-2 bg-[#FFAF00]"
+                    >
+                      Register
+                    </button>
+                  </div>
+                )}
+
+                {/* MODALS LOGIN */}
+                <Login
+                  logOpen={logOpen}
+                  handleLogin={handleLogin}
+                  handleRegister={handleRegister}
+                />
+
+                {/* MODALS REGISTER */}
+                <Register regOpen={regOpen} handleRegister={handleRegister} />
+              </Fragment>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    
     </div>
   );
 }

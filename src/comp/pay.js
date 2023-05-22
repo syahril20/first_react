@@ -1,44 +1,36 @@
-import { useEffect, useState } from "react";
+
 import Icon from "../assets/IconBlack.png";
 import TF from "../assets/tf.png";
-import { Card, Dialog, Typography } from "@material-tailwind/react";
+import { Typography } from "@material-tailwind/react";
 import { useParams } from "react-router-dom";
-const qty = JSON.parse(localStorage.getItem("qty"));
-const total = JSON.parse(localStorage.getItem("total"));
-
-function Payment(props) {
-  const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
-  console.log(props);
-  const TABLE_ROWS = [
-    {
-      No: 1,
-      FullName: "Radif Ganteng",
-      Gender: "Male",
-      Phone: "083896833112",
-      Qty: "Qty",
-      Jumlah: `: ${qty}`,
-    },
-    {
-      No: "",
-      FullName: "",
-      Gender: "",
-      Phone: "",
-      Qty: "TOTAL",
-      Jumlah: `: IDR. ${total.toLocaleString("en-us")}`,
-    },
-  ];
+export default function Pay(props){
+    const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
+    const TABLE_ROWS = [
+        {
+          No: 1,
+          FullName: "Radif Ganteng",
+          Gender: "Male",
+          Phone: "083896833112",
+          Qty: "Qty",
+          Jumlah: ": 1",
+        },
+        {
+          No: "",
+          FullName: "",
+          Gender: "",
+          Phone: "",
+          Qty: "TOTAL",
+          Jumlah: `: IDR. ${props.data[0].price.toLocaleString("en-us")}`,
+        },
+      ];
+    
   
-
-  const [payOpen, setPayOpen] = useState(false);
-  const handlePay = () => {
-    setPayOpen((pay) => !pay);
-  };
-
-  const par = useParams();
-  console.log(par, "INI DATAPERTE");
-  return (
-    <>
-      <div className="my-[10%] mx-[10%]">
+    
+      const par = useParams();
+      console.log(par, "INI DATAPERTE");
+    return(
+        <>
+        <div className="mt-[10%] mx-[10%] mb-32">
         <div className=" bg-white">
           <div className="border border-[#B7B7B7] rounded-lg py-4 bg-white">
             <div className="px-10">
@@ -62,8 +54,8 @@ function Payment(props) {
                 <div>
                   <p className="text-xl font-extrabold">{props.data.title}</p>
                   <p className="text-sm text-[#959595]">{props.data.place}</p>
-                  <p className="text-sm text-[#EC7A7A] mt-8 w-[120px] text-center bg-[#ec7a7a67]">
-                    Waiting Payment
+                  <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center bg-[#ff990070]">
+                    Waiting Approve
                   </p>
                 </div>
                 <div className="flex flex-wrap w-[300px] gap-8">
@@ -189,36 +181,8 @@ function Payment(props) {
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <button
-            onClick={handlePay}
-            // onClick={props.isLogin === true ? paym : handleLogin}
-            className="mt-5 text-white font-semibold border border-[#FFAF00] rounded px-12 py-3 ml-2 bg-[#FFAF00]"
-          >
-            PAY
-          </button>
-        </div>
+        
       </div>
-      <Dialog
-        size="lg"
-        open={payOpen}
-        handler={handlePay}
-        className="bg-transparent shadow-none"
-      >
-        <Card className="mx-auto w-full">
-          <div className=" max-h-full px-28">
-            <p className="text-center text-2xl text-black">
-              Your payment will be confirmed within 1 x 24 hours To see orders
-              click{" "}
-              <a href="/pay" className="underline font-bold">
-                Here
-              </a>{" "}
-              thank you
-            </p>
-          </div>
-        </Card>
-      </Dialog>
-    </>
-  );
-}
-export default Payment;
+        </>
+    )
+} 
