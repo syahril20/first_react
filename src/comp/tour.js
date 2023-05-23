@@ -1,4 +1,4 @@
-import { Carousel, IconButton } from "@material-tailwind/react";
+import { Card, Carousel, Dialog, IconButton } from "@material-tailwind/react";
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import Hotel from "../assets/hotel.png";
@@ -9,7 +9,7 @@ import Calendar from "../assets/calendar.png";
 import React, { useEffect, useState } from "react";
 import Login from "./modals/login";
 import Register from "./modals/register";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function Tour(props) {
   const [logOpen, setLogOpen] = useState(false);
@@ -23,8 +23,13 @@ function Tour(props) {
     setRegOpen((reg) => !reg);
     setLogOpen(false);
   };
+
+  const [payOpen, setPayOpen] = useState(false);
+  const handlePay = () => {
+    setPayOpen((pay) => !pay);
+  };
   const par = useParams();
-  console.log(par, "INI PAERTE");
+  // console.log(par, "INI PAERTE");
 
   const [add, setAdd] = useState(1);
   const [total, setTotal] = useState();
@@ -51,18 +56,18 @@ function Tour(props) {
 
   const paym = () => {
     // pay(`/payment/${par.id}`);
-      localStorage.setItem("qty", JSON.stringify(add));
-      localStorage.setItem("total", JSON.stringify(total));
-      <Link to={pay(`/payment/${par.id}`)} replace/>
-      
-      window.location.reload();
- 
+    localStorage.setItem("qty", JSON.stringify(add));
+    localStorage.setItem("total", JSON.stringify(total));
+    <Link to={pay(`/payment/${par.id}`)} replace />;
+
+    window.location.reload();
   };
   return (
     <>
       <div className="my-10 mx-[15%]">
         <p className="text-4xl font-bold">{props.data.fTitle}</p>
         <p className="text-[#A8A8A8] text-xl">{props.data.place}</p>
+
         <div className="my-10">
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-3 ">
@@ -109,18 +114,71 @@ function Tour(props) {
               </Carousel>
             </div>
             <div className="">
-              <img src={props.data.caro2} alt="waw" />
+              <img src={props.data.caro2} alt="waw" onClick={handlePay} className="cursor-pointer"/>
             </div>
             <div className="">
-              <img src={props.data.caro3} alt="waw" />
+              <img src={props.data.caro3} alt="waw" onClick={handlePay} className="cursor-pointer"/>
             </div>
             <div className="relative">
-              <p className="absolute font-bold text-lg text-white right-[50%] top-[40%]">+5</p>
-              <img src={props.data.caro4} alt="waw" className=""/>
-              
+              <p className="absolute font-bold text-lg text-white right-[50%] top-[40%]">
+                +5
+              </p>
+              <img src={props.data.caro4} alt="waw" className="" />
             </div>
           </div>
         </div>
+
+        <Dialog
+          size="lg"
+          open={payOpen}
+          handler={handlePay}
+          className="bg-transparent shadow-none"
+        >
+          <Card className="">
+          <Carousel
+                className="rounded-xl"
+                prevArrow={({ handlePrev }) => (
+                  <IconButton
+                    variant="text"
+                    color="white"
+                    size="lg"
+                    onClick={handlePrev}
+                    className="!absolute top-2/4 -translate-y-2/4 left-4"
+                  >
+                    <ArrowLeftIcon strokeWidth={2} className="w-6 h-6" />
+                  </IconButton>
+                )}
+                nextArrow={({ handleNext }) => (
+                  <IconButton
+                    variant="text"
+                    color="white"
+                    size="lg"
+                    onClick={handleNext}
+                    className="!absolute top-2/4 -translate-y-2/4 !right-4"
+                  >
+                    <ArrowRightIcon strokeWidth={2} className="w-6 h-6" />
+                  </IconButton>
+                )}
+              >
+                <img
+                  src={props.data.caro1}
+                  alt="image1"
+                  className="h-full w-full object-cover"
+                />
+                <img
+                  src={props.data.caro1}
+                  alt="image2"
+                  className="h-full w-full object-cover"
+                />
+                <img
+                  src={props.data.caro1}
+                  alt="image3"
+                  className="h-full w-full object-cover"
+                />
+              </Carousel>
+          </Card>
+        </Dialog>
+
         <div className="items-center">
           <p className="font-bold mb-5 text-lg">Information Trip</p>
           <div className="flex justify-between">
