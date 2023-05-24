@@ -167,14 +167,15 @@ function Tour(props) {
                 />
                 <img
                   src={props.data.caro1}
-                  alt="image2"
+                  alt="image1"
                   className="h-full w-full object-cover"
                 />
                 <img
                   src={props.data.caro1}
-                  alt="image3"
+                  alt="image1"
                   className="h-full w-full object-cover"
                 />
+               
               </Carousel>
           </Card>
         </Dialog>

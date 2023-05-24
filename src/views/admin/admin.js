@@ -94,8 +94,6 @@ const TABLE_ROWS = [
     Status: "Approve",
     Qty: "Qty",
     Jumlah: ": 1",
-    Qty: "Qty",
-    Jumlah: ": 1",
   },
 ];
 
@@ -131,12 +129,12 @@ export default function Admin(props) {
     setPayOpen((pay) => !pay);
     const id = TABLE_ROWS[para - 1];
     setModal(id);
-    // console.log(id);
+    console.log(id);
   };
-  useEffect(() => {
-    setModal(modal);
-    console.log(modal);
-  }, [handlePay]);
+  // useEffect(() => {
+  //   setModal(modal);
+  //   console.log(modal);
+  // }, [handlePay]);
 
   // useEffect(()=>{
   // },[handlePay])
@@ -170,7 +168,7 @@ export default function Admin(props) {
             </thead>
             <tbody>
               {TABLE_ROWS.map(
-                ({ No, Users, Trip, Bukti, Status, Action }, index) => {
+                ({ No, Users, Trip, Bukti, Status}, index) => {
                   const isLast = index === TABLE_ROWS.length - 1;
                   const classes = isLast
                     ? "p-4"

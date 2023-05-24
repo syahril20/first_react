@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 function Login(props) {
   const [login, setLogin] = useState([]);
   const useLogin = (e) => {
-    // e.preventDefault();
     login.email === "admin@admin"
       ? setLogin((a) => ({
           ...a,
@@ -18,22 +17,22 @@ function Login(props) {
           ...a,
           isUser: true,
         }))
-      : alert("Tidak Ada");
-      
+      : e.preventDefault();
+    
+
     props.handleLogin();
   };
   // console.log(login, "data Login");
-const Nav = useNavigate()
+  const Nav = useNavigate();
   useEffect(() => {
     if (login?.isAdmin) {
-      
       localStorage.setItem("login", JSON.stringify(login));
-      <Link to={Nav('/admin')}/>
-    }
-    if (login?.isUser) {
+      // Nav('/admin')
+      window.location.reload()
+    } else if (login?.isUser) {
       localStorage.setItem("login", JSON.stringify(login));
     }
-  }, [login, Nav]);
+  }, [login]);
 
   // useEffect(() => {
   //   const response = JSON.parse(localStorage.getItem("login"))
@@ -45,7 +44,6 @@ const Nav = useNavigate()
 
   return (
     <>
-    
       <Dialog
         size="md"
         open={props.logOpen}
@@ -80,7 +78,7 @@ const Nav = useNavigate()
                         className="w-full rounded border-none bg-[#D2D2D240] h-10"
                       />
                     </div>
-                    
+
                     <button className="text-center w-full bg-[#FFAF00] mb-1 py-2 rounded-sm text-white font-bold">
                       Login
                     </button>

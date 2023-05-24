@@ -1,8 +1,12 @@
+import { Link, useNavigate } from "react-router-dom";
+
 // import CardDetail from './cardDetail'
 const login = JSON.parse(localStorage.getItem("login"));
 console.log(login, "CardTour");
 
+
 function Card(props) {
+  const Nav = useNavigate()
   return (
     <div className="flex flex-col items-center relative">
       <div className="bg-white p-3 rounded">
@@ -15,19 +19,17 @@ function Card(props) {
         {props.isTrip === true ? (
           <p className="text-2xl font-semibold mt-5">{props.title}</p>
         ) : login?.isAdmin === true ? (
-          <a
-          href={`/in-trip`}
+          <Link to={`/in-trip`}
           className="text-2xl font-semibold cursor-pointer mt-5"
         >
           {props.title}
-        </a>
+        </Link>
         ) : (
-          <a
-            href={`/detail/${props.id}`}
+          <Link to={`/detail/${props.id}`}
             className="text-2xl font-semibold cursor-pointer mt-5"
           >
             {props.title}
-          </a>
+          </Link>
         )}
 
         <div className="flex justify-between mt-5">

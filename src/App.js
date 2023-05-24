@@ -15,15 +15,8 @@ import Footer from "./comp/footer";
 
 const login = JSON.parse(localStorage.getItem("login"));
 console.log(login, "app");
-const ProtectedRoute = ({ isUser, redirectPath = "/" }) => {
-  if (!isUser) {
-    return <Navigate to={redirectPath} replace />;
-  }
-
-  return <Outlet />;
-};
-const ProtectedRoute2 = ({ isAdmin, redirectPath = "/" }) => {
-  if (!isAdmin) {
+const ProtectedRoute = ({ isLogin, redirectPath = "/" }) => {
+  if (!isLogin) {
     return <Navigate to={redirectPath} replace />;
   }
 
@@ -61,7 +54,7 @@ function App() {
             }
           />
           {/* Users Private*/}
-          <Route element={<ProtectedRoute isUser={login?.isUser} />}>
+          <Route element={<ProtectedRoute isLogin={login?.isUser} />}>
             <Route
               path="/"
               element={
@@ -105,7 +98,7 @@ function App() {
 
 
           {/* ADMIN */}
-          <Route element={<ProtectedRoute2 isAdmin={login?.isAdmin} />}>
+          <Route element={<ProtectedRoute isLogin={login?.isAdmin} />}>
           <Route
             exact
             path="/admin"
