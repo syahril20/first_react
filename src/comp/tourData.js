@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import pic1 from "../assets/content1.png";
 import pic2 from "../assets/content2.png";
 import pic3 from "../assets/content3.png";
@@ -59,9 +58,7 @@ const tour = [
 
 
 function TourData(props) {
-  const {id}=useParams()
 
-  console.log(id);
   return (
     <>
       <div id="cardTour" className="flex justify-center gap-10 flex-wrap">

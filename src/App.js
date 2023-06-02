@@ -12,9 +12,9 @@ import BackgroundBlur from "./assets/BackgroundBLur.png";
 import NotFound from "./views/notFound";
 import Nav from "./comp/navbar";
 import Footer from "./comp/footer";
+import { createContext } from "react";
 
 const login = JSON.parse(localStorage.getItem("login"));
-console.log(login, "app");
 const ProtectedRoute = ({ isLogin, redirectPath = "/" }) => {
   if (!isLogin) {
     return <Navigate to={redirectPath} replace />;
@@ -22,7 +22,10 @@ const ProtectedRoute = ({ isLogin, redirectPath = "/" }) => {
 
   return <Outlet />;
 };
+
+
 function App() {
+
   return (
     <>
       <Router>
@@ -67,11 +70,16 @@ function App() {
                 />
               }
             />
-            <Route path="/profile" element={<Detail
+            <Route
+              path="/profile"
+              element={
+                <Detail
                   p={<img src={BackgroundBlur} alt="hehe" />}
                   f={<Footer isHome={true} />}
                   pages="profile"
-                />} />
+                />
+              }
+            />
             <Route
               exact
               path="/pay"
@@ -84,58 +92,54 @@ function App() {
               }
             />
             <Route
-            exact
-            path="/payment/:id"
-            element={
-              <Detail
-                p={<img src={BackgroundBlur} alt="hehe" />}
-                f={<Footer isHome={true} />}
-                pages="payment"
-              />
-            }
-          />
+              exact
+              path="/payment/:id"
+              element={
+                <Detail
+                  p={<img src={BackgroundBlur} alt="hehe" />}
+                  f={<Footer isHome={true} />}
+                  pages="payment"
+                />
+              }
+            />
           </Route>
-
 
           {/* ADMIN */}
           <Route element={<ProtectedRoute isLogin={login?.isAdmin} />}>
-          <Route
-            exact
-            path="/admin"
-            element={
-              <Detail
-                p={<img src={BackgroundBlur} alt="hehe" />}
-                f={<Footer isHome={true} />}
-                pages="admin"
-              />
-            }
-          />
-          <Route
-            exact
-            path="/in-trip"
-            element={
-              <Detail
-                p={<img src={BackgroundBlur} alt="hehe" />}
-                f={<Footer isHome={true} />}
-                pages="inTrip"
-              />
-            }
-          />
-          <Route
-            exact
-            path="/add-trip"
-            element={
-              <Detail
-                p={<img src={BackgroundBlur} alt="hehe" />}
-                f={<Footer isHome={true} />}
-                pages="addTrip"
-              />
-            }
-          />
-        </Route>
-          
-          
-          
+            <Route
+              exact
+              path="/admin"
+              element={
+                <Detail
+                  p={<img src={BackgroundBlur} alt="hehe" />}
+                  f={<Footer isHome={true} />}
+                  pages="admin"
+                />
+              }
+            />
+            <Route
+              exact
+              path="/in-trip"
+              element={
+                <Detail
+                  p={<img src={BackgroundBlur} alt="hehe" />}
+                  f={<Footer isHome={true} />}
+                  pages="inTrip"
+                />
+              }
+            />
+            <Route
+              exact
+              path="/add-trip"
+              element={
+                <Detail
+                  p={<img src={BackgroundBlur} alt="hehe" />}
+                  f={<Footer isHome={true} />}
+                  pages="addTrip"
+                />
+              }
+            />
+          </Route>
 
           {/* NOTFOUND */}
           <Route
