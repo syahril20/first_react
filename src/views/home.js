@@ -2,9 +2,6 @@ import CardDetail from "../comp/cardDetail";
 import Head from "../comp/header";
 import CardTour from "../comp/tourData";
 import Footer from "../comp/footer";
-import { API } from "../config/api";
-import { useQuery } from "react-query";
-import { Userx } from "../App";
 
 function Home(props) {
   // const { data: User } = useQuery("t", async () => {

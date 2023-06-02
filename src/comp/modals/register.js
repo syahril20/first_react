@@ -12,6 +12,7 @@ function Register(props) {
     password: "",
     phone: "",
     address: "",
+    role_id: 2,
   });
   
   // const regMod = props.handleRegister
@@ -20,14 +21,16 @@ function Register(props) {
       e.preventDefault();
       
       const response = await API.post("/register", form);
-      console.log("register success : ", response?.data);
+      console.log("register success : ", response?.data?.data);
       props.handleRegister(false)
+      alert("REGISTER SUKSES")
       setForm({
         name: "",
         email: "",
         password: "",
         phone: "",
         address: "",
+        role_id: "",
       });
     } catch (error) {
       console.log("register failed : ", error);

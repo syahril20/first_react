@@ -12,7 +12,6 @@ import BackgroundBlur from "./assets/BackgroundBLur.png";
 import NotFound from "./views/notFound";
 import Nav from "./comp/navbar";
 import Footer from "./comp/footer";
-import { createContext } from "react";
 
 const login = JSON.parse(localStorage.getItem("login"));
 const ProtectedRoute = ({ isLogin, redirectPath = "/" }) => {
