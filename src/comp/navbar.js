@@ -5,8 +5,8 @@ import Login from "./modals/login";
 import logoutIcon from "../assets/logout.png";
 import payIcon from "../assets/bill.png";
 import profileIcon from "../assets/user.png";
-import Jour from "../assets/journey.png"
-import { useEffect, useState, Fragment } from "react";
+import Jour from "../assets/journey.png";
+import { useEffect, useState, Fragment, useContext } from "react";
 
 import {
   Button,
@@ -17,6 +17,7 @@ import {
 } from "@material-tailwind/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "./context/context";
 const login = JSON.parse(localStorage.getItem("login"));
 export default function Nav() {
   const Navi = useNavigate();
@@ -35,7 +36,6 @@ export default function Nav() {
   };
 
   useEffect(() => {
-    
     if (login) {
       setLogins(login);
     }
@@ -43,24 +43,26 @@ export default function Nav() {
   // console.log(logins, "Navbar");
 
   const handleLogout = () => {
-    localStorage.removeItem("login");
+    localStorage.removeItem("token");
     window.location.reload();
   };
+
+  const [state] = useContext(UserContext);
+  console.log(state.user, "KIPAK");
 
   return (
     <div className="absolute z-10 w-full">
       <div>
         <div className="z-20 flex items-center justify-between w-full px-20 bg-cover">
           <div id="left-nav" className="filter brightness-125">
-
-            <a href={login?.isAdmin ? "/admin" : "/"}>
+            <a href={state.user.role_id === 1 ? "/admin" : "/"}>
               <img src={image} alt="me" />
             </a>
           </div>
           <div id="right-nav" className="flex items-center">
             <div className="">
               <Fragment>
-                {logins?.isUser ? (
+                {state.user.role_id === 2 ? (
                   <div className="relative mx-auto flex items-center text-blue-gray-900">
                     <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block"></div>
 
@@ -132,7 +134,7 @@ export default function Nav() {
                       </MenuList>
                     </Menu>
                   </div>
-                ) : logins.isAdmin ? (
+                ) : state.user.role_id === 1 ? (
                   <div className="relative mx-auto flex items-center text-blue-gray-900">
                     <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block"></div>
 

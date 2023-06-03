@@ -15,7 +15,6 @@ function Register(props) {
     role_id: 2,
   });
   
-  // const regMod = props.handleRegister
   const handleRegister = useMutation(async (e) => {
     try {
       e.preventDefault();
@@ -30,7 +29,6 @@ function Register(props) {
         password: "",
         phone: "",
         address: "",
-        role_id: "",
       });
     } catch (error) {
       console.log("register failed : ", error);

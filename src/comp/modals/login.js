@@ -1,38 +1,93 @@
 import { Dialog, Card, Typography } from "@material-tailwind/react";
 import Palm1 from "../../assets/modPalm1.png";
 import Palm2 from "../../assets/modPalm2.png";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useMutation, useQuery } from "react-query";
+import { API, setAuthToken } from "../../config/api";
+import { UserContext } from "../context/context";
+import { useNavigate } from "react-router-dom";
 
 function Login(props) {
-  const [login, setLogin] = useState([]);
-  const useLogin = (e) => {
-    login.email === "admin@admin"
-      ? setLogin((a) => ({
-          ...a,
-          isAdmin: true,
-        }))
-      : login.email === "user@user"
-      ? setLogin((a) => ({
-          ...a,
-          isUser: true,
-        }))
-      : e.preventDefault();
-    
+  //   const { data: User } = useQuery("t", async () => {
+  //   const response = await API.get("/users");
+  //   return response?.data?.data;
+  // })
+  let navigate = useNavigate();
+  const [_, dispatch] = useContext(UserContext);
 
-    props.handleLogin();
-  };
-  // console.log(login, "data Login");
-  const Nav = useNavigate();
-  useEffect(() => {
-    if (login?.isAdmin) {
-      localStorage.setItem("login", JSON.stringify(login));
-      // Nav('/admin')
-      window.location.reload()
-    } else if (login?.isUser) {
-      localStorage.setItem("login", JSON.stringify(login));
+  // const [message, setMessage] = useState(null);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = form;
+
+  const handleLogin = useMutation(async (e) => {
+    try {
+      e.preventDefault();
+
+      const response = await API.post("/login", form);
+      console.log("Login Success : ", response?.data?.data);
+      alert("Login Sukses");
+      props.handleLogin(false);
+
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: response?.data?.data,
+      });
+
+      setAuthToken(localStorage.token);
+      console.log(localStorage.token, "WADUH");
+
+      if (response.data.data.role_id === 1) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+
+      // if (response?.data?.data === "admin") {
+      //   navigate("/complain-admin");
+      // } else {
+      //   navigate("/");
+      // }
+
+      console.log(form);
+      // localStorage.setItem("login", JSON.stringify(form));
+      // if (form?.role_id == 1) {
+      //   // Nav('/admin')
+      //   console.log("MANTAP");
+      //   window.location.reload();
+      // } else if (form?.role_id == 2) {
+      //   localStorage.setItem("login", JSON.stringify(form));
+      // }
+    } catch (error) {
+      const response = await API.post("/login", form);
+      console.log("register failed : ", response?.data?.data);
+      alert("gagal");
     }
-  }, [login]);
+  });
+
+  // const [login, setLogin] = useState([]);
+  // const useLogin = (e) => {
+  //   login.email === "admin@admin"
+  //     ? setLogin((a) => ({
+  //         ...a,
+  //         isAdmin: true,
+  //       }))
+  //     : login.email === "user@user"
+  //     ? setLogin((a) => ({
+  //         ...a,
+  //         isUser: true,
+  //       }))
+  //     : e.preventDefault();
+
+  //   props.handleLogin();
+  // };
+  // console.log(login, "data Login");
+
+  // useEffect(() => {
+
+  // }, [form]);
 
   // useEffect(() => {
   //   const response = JSON.parse(localStorage.getItem("login"))
@@ -59,14 +114,15 @@ function Login(props) {
               <div className="p-10   space-y-6">
                 <div className="my-10 h-[300px]">
                   <p className="text-center text-5xl mb-10">Login</p>
-                  <form className="" onSubmit={useLogin}>
+                  <form className="" onSubmit={(e) => handleLogin.mutate(e)}>
                     <div className="mb-5">
                       <label className="font-bold text-2xl">Email</label>
                       <input
                         onChange={(e) => {
-                          setLogin({ ...login, email: e.target.value });
+                          setForm({ ...form, email: e.target.value });
                           console.log(e.target.value);
                         }}
+                        value={email}
                         type="email"
                         className="w-full rounded border-none bg-[#D2D2D240] h-10"
                       />
@@ -74,6 +130,11 @@ function Login(props) {
                     <div className="mb-5">
                       <label className="font-bold text-2xl">Password</label>
                       <input
+                        onChange={(e) => {
+                          setForm({ ...form, password: e.target.value });
+                          console.log(e.target.value);
+                        }}
+                        value={password}
                         type="password"
                         className="w-full rounded border-none bg-[#D2D2D240] h-10"
                       />
