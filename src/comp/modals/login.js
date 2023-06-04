@@ -26,10 +26,10 @@ function Login(props) {
     try {
       e.preventDefault();
 
+      props.handleLogin(false);
       const response = await API.post("/login", form);
       console.log("Login Success : ", response?.data?.data);
       alert("Login Sukses");
-      props.handleLogin(false);
 
       dispatch({
         type: "LOGIN_SUCCESS",

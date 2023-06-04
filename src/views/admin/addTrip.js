@@ -1,20 +1,88 @@
 import { useState } from "react";
 import Attach from "../../assets/attach.png";
+import { API } from "../../config/api";
+import { useMutation, useQuery } from "react-query";
 
 export default function AddTrip() {
   const putClass =
     "border border-[#B1B1B1] bg-[#C4C4C480] w-full rounded-sm h-8";
-  const [trip, setTrip] = useState();
-  const handleSubmit = () => {
-    localStorage.setItem("Trip", JSON.stringify(trip));
-  };
+  const [trip, setTrip] = useState({
+    title: "",
+    country: "",
+    accomodation: "",
+    transportation: "",
+    eat: "",
+    day: "",
+    night: "",
+    price: "",
+    quota: "",
+    description: "",
+    image: "",
+  });
+  // const handleSubmit = () => {
+  //   localStorage.setItem("Trip", JSON.stringify(trip));
+  // };
 
+  const handleSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault();
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
+
+      const formData = new FormData();
+      formData.set("title", trip?.title);
+      formData.set("id_country", trip?.country);
+      formData.set("accomodation", trip?.accomodation);
+      formData.set("transportation", trip?.transportation);
+      formData.set("eat", trip?.eat);
+      formData.set("day", trip?.day);
+      formData.set("night", trip?.night);
+      formData.set("date_trip", trip?.date_trip);
+      formData.set("price", trip?.price);
+      formData.set("quota", trip?.quota);
+      formData.set("description", trip?.description);
+      formData.set("image", trip?.image[0], trip?.image[0].name);
+      // setTrip({
+      //   title: "",
+      //   country: "",
+      //   accomodation: "",
+      //   transportation: "",
+      //   eat: "",
+      //   day: "",
+      //   night: "",
+      //   price: "",
+      //   quota: "",
+      //   description: "",
+      //   image: "",
+      // });
+      const response = await API.post("/trip", formData, config);
+      console.log("Add Trip success : ", response);
+      alert("Data Added");
+    } catch (error) {
+      console.log("Add Trip failed : ", error);
+      alert("gagal");
+    }
+  });
+
+  const [james, jesica] = useState();
+  const { data: User } = useQuery("t", async () => {
+    const response = await API.get("/country");
+    return jesica(response?.data?.data);
+  });
+  console.log(james);
   return (
     <>
       <div className="mx-[5%] mt-[5%] mb-80">
         <p className="text-4xl font-bold">Add Trip</p>
         <div className="mx-[2%] mt-[3%]">
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+          <form
+            enctype="multipart/form-data"
+            className="flex flex-col gap-5"
+            onSubmit={(e) => handleSubmit.mutate(e)}
+          >
             <div>
               <label className="font-bold text-lg">Title Trip</label>
               <input
@@ -35,14 +103,18 @@ export default function AddTrip() {
                   console.log(e.target.value);
                 }}
               >
-                <option disabled selected>
-                  Select Country
+                <option selected disabled value="placeholder">
+                  SELECT COUNTRY
                 </option>
-                <option value="Jakarta">Jakarta</option>
-                <option value="Australia">Australia</option>
-                <option value="Zimbabwe">Zimbabwe</option>
-                <option value="Japan">Japan</option>
-                <option value="South Korea">South Korea</option>
+                {james?.map((country, idx) => {
+                  return (
+                    <>
+                      <option key={idx} value={country.id_country}>
+                        {country.name_country}
+                      </option>
+                    </>
+                  );
+                })}
               </select>
             </div>
             <div>
@@ -83,7 +155,7 @@ export default function AddTrip() {
               <div className="flex gap-5">
                 <div className="flex items-center gap-2">
                   <input
-                    type="text"
+                    type="number"
                     className={`${putClass}`}
                     onChange={(e) => {
                       setTrip({ ...trip, day: e.target.value });
@@ -94,7 +166,7 @@ export default function AddTrip() {
                 </div>
                 <div className="flex items-center gap-2">
                   <input
-                    type="text"
+                    type="number"
                     className={`${putClass}`}
                     onChange={(e) => {
                       setTrip({ ...trip, night: e.target.value });
@@ -106,9 +178,20 @@ export default function AddTrip() {
               </div>
             </div>
             <div>
-              <label className="font-bold text-lg">Price</label>
+              <label className="font-bold text-lg">Date Trip</label>
               <input
                 type="text"
+                className={`${putClass}`}
+                onChange={(e) => {
+                  setTrip({ ...trip, date_trip: e.target.value });
+                  console.log(e.target.value);
+                }}
+              ></input>
+            </div>
+            <div>
+              <label className="font-bold text-lg">Price</label>
+              <input
+                type="number"
                 className={`${putClass}`}
                 onChange={(e) => {
                   setTrip({ ...trip, price: e.target.value });
@@ -119,7 +202,7 @@ export default function AddTrip() {
             <div>
               <label className="font-bold text-lg">Quota</label>
               <input
-                type="text"
+                type="number"
                 className={`${putClass}`}
                 onChange={(e) => {
                   setTrip({ ...trip, quota: e.target.value });
@@ -150,8 +233,8 @@ export default function AddTrip() {
                   type="file"
                   className="w-[200px] relative custom-file-input bg-[#C4C4C480] border border-[#B1B1B1] text-[#FFAF00]"
                   onChange={(e) => {
-                    setTrip({ ...trip, img: e.target.value });
-                    console.log(e.target.value);
+                    setTrip({ ...trip, image: e.target.files });
+                    console.log(e.target.files);
                   }}
                 />
               </div>

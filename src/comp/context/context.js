@@ -1,5 +1,4 @@
 import { createContext, useReducer } from "react";
-import { setAuthToken } from "../../config/api";
 
 export const UserContext = createContext();
 
@@ -13,11 +12,12 @@ const reducer = (state, action) => {
 
   switch (type) {
     case "USER_SUCCESS":
-       
+
     case "LOGIN_SUCCESS":
       // Set localstorage item with key "token" here ...
       localStorage.setItem("token", payload.token);
       console.log(payload.role_id);
+      
 
       return {
         isLogin: true,
@@ -26,7 +26,9 @@ const reducer = (state, action) => {
     // add case "AUTH_ERROR" here ..
     case "LOGOUT":
       // Remove localstorage item with key "token" here ...
-      localStorage.removeItem("token")
+      localStorage.removeItem("token");
+      window.location.reload();
+
       return {
         isLogin: false,
         user: {},

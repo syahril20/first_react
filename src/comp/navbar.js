@@ -6,7 +6,7 @@ import logoutIcon from "../assets/logout.png";
 import payIcon from "../assets/bill.png";
 import profileIcon from "../assets/user.png";
 import Jour from "../assets/journey.png";
-import { useEffect, useState, Fragment, useContext } from "react";
+import { useState, Fragment, useContext } from "react";
 
 import {
   Button,
@@ -18,14 +18,11 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./context/context";
-const login = JSON.parse(localStorage.getItem("login"));
 export default function Nav() {
   const Navi = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [regOpen, setRegOpen] = useState(false);
-
-  const [logins, setLogins] = useState({});
 
   const handleLogin = () => {
     setLogOpen((log) => !log);
@@ -35,19 +32,17 @@ export default function Nav() {
     setLogOpen(false);
   };
 
-  useEffect(() => {
-    if (login) {
-      setLogins(login);
-    }
-  }, []);
   // console.log(logins, "Navbar");
-
+  const [state, dispatch] = useContext(UserContext);
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
+
+    dispatch({
+      type: "LOGOUT"
+    })
+    // window.location.reload();
+    // localStorage.removeItem("token");
   };
 
-  const [state] = useContext(UserContext);
   console.log(state.user, "KIPAK");
 
   return (
