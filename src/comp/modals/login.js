@@ -42,7 +42,7 @@ function Login(props) {
       if (response.data.data.role_id === 1) {
         navigate("/admin");
       } else {
-        navigate("/");
+        e.preventDefault()
       }
 
       // if (response?.data?.data === "admin") {

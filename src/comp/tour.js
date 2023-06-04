@@ -1,4 +1,10 @@
-import { Card, Carousel, Dialog, IconButton } from "@material-tailwind/react";
+import {
+  Alert,
+  Card,
+  Carousel,
+  Dialog,
+  IconButton,
+} from "@material-tailwind/react";
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import Hotel from "../assets/hotel.png";
@@ -12,6 +18,7 @@ import Register from "./modals/register";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
+import { UserContext } from "./context/context";
 
 function Tour(props) {
   const [logOpen, setLogOpen] = useState(false);
@@ -35,29 +42,30 @@ function Tour(props) {
 
   const [add, setAdd] = useState(1);
 
-  const [logins, setLogins] = useState({});
-  useEffect(() => {
-    const login = JSON.parse(localStorage.getItem("login"));
-    if (login) {
-      setLogins(login);
-    }
-  }, []);
-
-  const paym = () => {
-    // pay(`/payment/${par.id}`);
-    localStorage.setItem("qty", JSON.stringify(add));
-    localStorage.setItem("total", JSON.stringify(total));
-    <Link to={pay(`/payment/${par.id}`)} replace />;
-
-    window.location.reload();
-  };
   const [Trip, setTrips] = useState();
   const { data: Trips } = useQuery("t", async () => {
     const response = await API.get(`/trip/${par.id}`);
     return setTrips(response?.data?.data);
   });
+
+  const [Trans, setTrans] = useState();
+
+  const paym = () => {
+    // pay(`/payment/${par.id}`);
+    // localStorage.removeItem("qty");
+    // localStorage.removeItem("total");
+
+    setTimeout(() => {
+      localStorage.setItem("Trans", JSON.stringify(Trans));
+      // localStorage.setItem("qty", JSON.stringify(add));
+      // localStorage.setItem("total", JSON.stringify(total));
+
+      window.location.reload(pay(`/payment/${par.id}`));
+    }, 500);
+  };
+
   const [total, setTotal] = useState(Trip?.price);
-  console.log(Trip?.price);
+
   const handleAdd = () => {
     setAdd(add + 1);
   };
@@ -66,12 +74,41 @@ function Tour(props) {
       setAdd(add - 1);
     }
   };
+  const [state] = useContext(UserContext);
+  var d = new Date();
+  var options = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  var optionsDay = {
+    weekday: "long",
+  };
+  var day = d.toLocaleDateString("en-US", optionsDay);
+  var formattedDate = d.toLocaleDateString("en-US", options);
+
+  console.log(formattedDate);
   useEffect(() => {
     if (Trip?.price !== 0) {
       setTotal(Trip?.price * add);
+      setTrans({
+        trip: Trip,
+        user: state?.user,
+        qty: add,
+        total: Trip?.price * add,
+        date_now : formattedDate,
+        day_now : day,
+        status : "Waiting Payment"
+      });
     }
-  }, [Trip,add]);
-  console.log(Trip, "TRIP ANJAY");
+  }, [add, Trip?.price]);
+
+  useEffect(() => {}, [add, Trip?.price]);
+
+  console.log(Trans, total, "TRIP ANJAY");
+
+  console.log(state?.isLogin, "CUK");
+
   return (
     <>
       <div className="my-10 mx-[15%]">
@@ -241,7 +278,7 @@ function Tour(props) {
               </div>
             </div>
             <div>
-              <label className="text-[#A8A8A8] text-sm ">Eat</label>
+              <label className="text-[#A8A8A8] text-sm ">Date Trip</label>
               <div className="flex items-center">
                 <img
                   src={Calendar}
@@ -291,9 +328,10 @@ function Tour(props) {
           <div className="border border-[#B7B7B780] my-5" />
         </div>
         <div className="flex justify-end mb-32">
+          <div></div>
           <button
             // onClick={handleLogin}
-            onClick={logins.isUser === true ? paym : handleLogin}
+            onClick={state?.isLogin === true ? paym : handleLogin}
             className="text-white font-semibold border border-[#FFAF00] rounded px-12 py-3 ml-2 bg-[#FFAF00]"
           >
             BOOK NOW

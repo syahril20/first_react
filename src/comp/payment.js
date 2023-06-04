@@ -1,22 +1,36 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Icon from "../assets/IconBlack.png";
 import TF from "../assets/tf.png";
 import { Card, Dialog, Typography } from "@material-tailwind/react";
 import { useParams } from "react-router-dom";
-const qty = JSON.parse(localStorage.getItem("qty"));
-const total = JSON.parse(localStorage.getItem("total"));
+import { UserContext } from "./context/context";
+import { useMutation, useQuery } from "react-query";
+import { API } from "../config/api";
+const Trans = JSON.parse(localStorage.getItem("Trans"));
 
 function Payment(props) {
+  const [james1, jesica1] = useState();
+  const [james2, jesica2] = useState();
+
+  console.log(james1, james2, "COBAIN");
+  useEffect(() => {
+    jesica1(Trans?.qty);
+    jesica2(Trans?.total);
+  }, [Trans?.qty, Trans?.total]);
+
+  const [state] = useContext(UserContext);
+  console.log(state?.user, "INI DATA");
+
   const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
   console.log(props);
   const TABLE_ROWS = [
     {
       No: 1,
-      FullName: "Radif Ganteng",
+      FullName: Trans?.user?.name,
       Gender: "Male",
-      Phone: "083896833112",
+      Phone: Trans?.user?.phone,
       Qty: "Qty",
-      Jumlah: `: ${qty}`,
+      Jumlah: `: ${james1}`,
     },
     {
       No: "",
@@ -24,10 +38,9 @@ function Payment(props) {
       Gender: "",
       Phone: "",
       Qty: "TOTAL",
-      Jumlah: `: IDR. ${total.toLocaleString("en-us")}`,
+      Jumlah: `: IDR. ${james2?.toLocaleString("en-us")}`,
     },
   ];
-  
 
   const [payOpen, setPayOpen] = useState(false);
   const handlePay = () => {
@@ -36,6 +49,71 @@ function Payment(props) {
 
   const par = useParams();
   console.log(par, "INI DATAPERTE");
+
+  const [Trip, setTrips] = useState();
+  const { data: Trips } = useQuery("t", async () => {
+    const response = await API.get(`/trip/${par.id}`);
+    return setTrips(response?.data?.data);
+  });
+
+  console.log(Trip, "INI ANJAY");
+
+  const [trip, setTrip] = useState({
+    counter_qty: "",
+    total: "",
+    status: "",
+    attachment: "",
+    id_trip: "",
+  });
+  const handleSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault();
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
+
+      const formData = new FormData();
+      formData.set("counter_qty", trip?.counter_qty);
+      formData.set("total", trip?.total);
+      formData.set("status", trip?.status);
+      formData.set("attachment", trip?.attachment);
+      formData.set("id_trip", trip?.id_trip);
+      // setTrip({
+      //   title: "",
+      //   country: "",
+      //   accomodation: "",
+      //   transportation: "",
+      //   eat: "",
+      //   day: "",
+      //   night: "",
+      //   price: "",
+      //   quota: "",
+      //   description: "",
+      //   image: "",
+      // });
+      const response = await API.post("/transaction", formData, config);
+      console.log("Add Trip success : ", response);
+      alert("Data Added");
+    } catch (error) {
+      console.log("Add Trip failed : ", error);
+      alert("gagal");
+    }
+  });
+
+  useEffect(() => {
+    setTrip({ 
+      ...Trip,
+      counter_qty: Trans?.qty,
+      total: Trans?.total,
+      status: "Waiting Approve",
+      attachment: "kosong",
+      id_trip: Trans?.trip?.id_trip,
+    });
+  }, [Trans]);
+  console.log(Trip, "OTW TRANSACTION");
+
   return (
     <>
       <div className="my-[10%] mx-[10%]">
@@ -54,16 +132,18 @@ function Payment(props) {
                     Booking
                   </p>
                   <p className="text-xl text-[#878787]">
-                    <b>Saturday</b>, 22 July 2020
+                    <b>{Trans?.day_now}</b>, {Trans?.date_now}
                   </p>
                 </div>
               </div>
               <div id="content" className="flex gap-5 justify-between">
                 <div>
-                  <p className="text-xl font-extrabold">{props.data.title}</p>
-                  <p className="text-sm text-[#959595]">{props.data.place}</p>
+                  <p className="text-xl font-extrabold">{Trans?.trip?.title}</p>
+                  <p className="text-sm text-[#959595]">
+                    {Trans?.trip?.country?.name_country}
+                  </p>
                   <p className="text-sm text-[#EC7A7A] mt-8 w-[120px] text-center bg-[#ec7a7a67]">
-                    Waiting Payment
+                    {Trans?.status}
                   </p>
                 </div>
                 <div className="flex flex-wrap w-[300px] gap-8">
@@ -71,13 +151,13 @@ function Payment(props) {
                     <div className="mb-6">
                       <label className="font-extrabold">Date Trip</label>
                       <p className="text-sm text-[#959595]">
-                        {props.data.dateTrip}
+                        {Trans?.trip?.date_trip}
                       </p>
                     </div>
                     <div>
                       <label className="font-extrabold">Accomodation</label>
                       <p className="text-sm text-[#959595]">
-                        {props.data.acomodation}
+                        {Trans?.trip?.accomodation}
                       </p>
                     </div>
                   </div>
@@ -85,13 +165,13 @@ function Payment(props) {
                     <div className="mb-6">
                       <label className="font-extrabold">Duration</label>
                       <p className="text-sm text-[#959595]">
-                        {props.data.duration}
+                        {Trans?.trip?.day} Day {Trans?.trip?.night} Night
                       </p>
                     </div>
                     <div>
                       <label className="font-extrabold">transportation</label>
                       <p className="text-sm text-[#959595]">
-                        {props.data.transportation}
+                        {Trans?.trip?.transportation}
                       </p>
                     </div>
                   </div>
@@ -191,7 +271,8 @@ function Payment(props) {
 
         <div className="flex justify-end">
           <button
-            onClick={handlePay}
+            onClick={(e) => handleSubmit.mutate(e)}
+            // onClick={handlePay}
             // onClick={props.isLogin === true ? paym : handleLogin}
             className="mt-5 text-white font-semibold border border-[#FFAF00] rounded px-12 py-3 ml-2 bg-[#FFAF00]"
           >

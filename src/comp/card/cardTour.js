@@ -12,7 +12,7 @@ function Card(props) {
   return (
     <div className="flex flex-col items-center">
       <div className="bg-white p-3 rounded  w-[330px] relative">
-        <img src={props.image} className="" alt="waw" />
+        <img src={props.image} className="h-[300px] object-cover" alt="waw" />
 
         <p className="bg-white absolute rounded-l-lg w-[60px] py-1 top-5 left-[260px] flex justify-center">
           {props.quota}
