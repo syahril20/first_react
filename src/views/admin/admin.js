@@ -1,7 +1,7 @@
 import Search from "../../assets/search.png";
 import Icon from "../../assets/IconBlack.png";
 import TF from "../../assets/tf.png";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Card,
   Typography,
@@ -12,6 +12,9 @@ import {
   Tooltip,
   Button,
 } from "@material-tailwind/react";
+import { UserContext } from "../../comp/context/context";
+import { useQuery } from "react-query";
+import { API } from "../../config/api";
 
 const TABLE_HEAD = [
   "No",
@@ -125,12 +128,7 @@ export default function Admin(props) {
   //   )
   // }
 
-  const handlePay = (para) => {
-    setPayOpen((pay) => !pay);
-    const id = TABLE_ROWS[para - 1];
-    setModal(id);
-    console.log(id);
-  };
+  
   // useEffect(() => {
   //   setModal(modal);
   //   console.log(modal);
@@ -142,6 +140,23 @@ export default function Admin(props) {
   const classes = isLast
     ? "p-4 border-t border-[#B7B7B780] text-[#FF0000] "
     : "p-4 border-t border-[#B7B7B780] text-black text-lg";
+    const [Users, setUsers] = useState([])
+    const { _ } = useQuery("t", async () => {
+      const response = await API.get("/transaction");
+      return setUsers(response?.data?.data)
+    })
+    const Trans = Users
+  
+  console.log(Trans, "ANJAY");
+
+  const handlePay = (para) => {
+    setPayOpen((pay) => !pay);
+    const id = Trans[para];
+    setModal(id);
+    console.log(id, "DATA MODAL");
+  };
+
+  console.log(modal, "DATA MODAL BARU");
   return (
     <div className="m-[10%]">
       <p className="text-3xl font-bold mb-3">Incoming Transaction</p>
@@ -167,87 +182,80 @@ export default function Admin(props) {
               </tr>
             </thead>
             <tbody>
-              {TABLE_ROWS.map(
-                ({ No, Users, Trip, Bukti, Status}, index) => {
-                  const isLast = index === TABLE_ROWS.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-[#C4C4C4]";
+              {Users?.map((user, idx) => {
+                const classes = "p-4 border-b border-[#C4C4C4]";
+                return (
+                  <tr key={idx}>
+                    <td className={`${classes} w-4`}>
+                      <div className="flex items-center gap-3">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-bold"
+                        >
+                          {idx+1}
+                        </Typography>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {user?.user?.name}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {user?.trip?.title}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {user?.attachment}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <div className="w-max">
+                        <Chip
+                          size="sm"
+                          variant="ghost"
+                          value={user?.status}
+                          color={user?.status === "Approve"
+                              ? "green"
+                              : user?.status === "Pending"
+                              ? "yellow"
+                              : "red"
+                          }
+                        />
+                      </div>
+                    </td>
 
-                  return (
-                    <tr key={No}>
-                      <td className={`${classes} w-4`}>
-                        <div className="flex items-center gap-3">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold"
-                          >
-                            {No}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
+                    <td className={classes}>
+                      <Tooltip content="Edit User">
+                        <IconButton
+                          variant="text"
                           color="blue-gray"
-                          className="font-normal"
+                          onClick={() => {
+                            handlePay(idx);
+                          }}
                         >
-                          {Users}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {Trip}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {Bukti}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <div className="w-max">
-                          <Chip
-                            size="sm"
-                            variant="ghost"
-                            value={Status}
-                            color={
-                              Status === "Approve"
-                                ? "green"
-                                : Status === "Pending"
-                                ? "yellow"
-                                : "red"
-                            }
-                          />
-                        </div>
-                      </td>
-
-                      <td className={classes}>
-                        <Tooltip content="Edit User">
-                          <IconButton
-                            variant="text"
-                            color="blue-gray"
-                            onClick={() => {
-                              handlePay(No);
-                            }}
-                          >
-                            <img src={Search} className="h-4 w-4" alt="Waw" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
+                          <img src={Search} className="h-4 w-4" alt="Waw" />
+                        </IconButton>
+                      </Tooltip>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </CardBody>
@@ -281,21 +289,22 @@ export default function Admin(props) {
                 <div id="content" className="flex gap-5 justify-between">
                   <div>
                     <p className="text-xl font-extrabold">
-                      {props.data[0].title}
+                      {modal?.trip?.title}
                     </p>
-                    <p className="text-sm text-[#959595]">
-                      {modal?.Place}
-                    </p>
+                    <p className="text-sm text-[#959595]">{modal?.trip?.country?.name_country}</p>
                     <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center ">
-                    <Chip
-                          size="sm"
-                          variant="ghost"
-                          value={modal?.Status}
-                          color={
-                            modal?.Status === "Approve" ? "green" : modal?.Status === "Pending" ? "amber" : "red"
-                          }
-                        />
-                      
+                      <Chip
+                        size="sm"
+                        variant="ghost"
+                        value={modal?.status}
+                        color={
+                          modal?.status === "Approve"
+                            ? "green"
+                            : modal?.status === "Pending"
+                            ? "amber"
+                            : "red"
+                        }
+                      />
                     </p>
                   </div>
                   <div className="flex flex-wrap w-[300px] gap-8">
@@ -303,13 +312,13 @@ export default function Admin(props) {
                       <div className="mb-6">
                         <label className="font-extrabold">Date Trip</label>
                         <p className="text-sm text-[#959595]">
-                          {props.data[0].dateTrip}
+                          {modal?.trip?.date_trip}
                         </p>
                       </div>
                       <div>
                         <label className="font-extrabold">Accomodation</label>
                         <p className="text-sm text-[#959595]">
-                          {props.data[0].acomodation}
+                          {modal?.trip?.accomodation}
                         </p>
                       </div>
                     </div>
@@ -317,13 +326,13 @@ export default function Admin(props) {
                       <div className="mb-6">
                         <label className="font-extrabold">Duration</label>
                         <p className="text-sm text-[#959595]">
-                          {props.data[0].duration}
+                          {modal?.trip?.day} Day {modal?.trip?.night} Night
                         </p>
                       </div>
                       <div>
                         <label className="font-extrabold">transportation</label>
                         <p className="text-sm text-[#959595]">
-                          {props.data[0].transportation}
+                          {modal?.trip?.transportation}
                         </p>
                       </div>
                     </div>
@@ -360,7 +369,7 @@ export default function Admin(props) {
                           variant="small"
                           className="text-[#B1B1B1] text-lg"
                         >
-                          {modal?.No}
+                          1
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -368,7 +377,7 @@ export default function Admin(props) {
                           variant="small"
                           className="text-[#B1B1B1] text-lg"
                         >
-                          {modal?.Users}
+                          {modal?.user?.name}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -376,7 +385,7 @@ export default function Admin(props) {
                           variant="small"
                           className="text-[#B1B1B1] text-lg"
                         >
-                          {modal?.Gender}
+                          male
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -384,7 +393,7 @@ export default function Admin(props) {
                           variant="small"
                           className="text-[#B1B1B1] text-lg"
                         >
-                          {modal?.Phone}
+                          {modal?.user?.phone}
                         </Typography>
                       </td>
                       <td className={classes}>
@@ -401,7 +410,7 @@ export default function Admin(props) {
                           as="a"
                           className=" text-lg font-bold text-black"
                         >
-                          {modal?.Jumlah}
+                          {modal?.counter_qty}
                         </Typography>
                       </td>
                     </tr>
@@ -424,7 +433,7 @@ export default function Admin(props) {
                           as="a"
                           className=" text-lg font-bold"
                         >
-                          {props.data[0].price.toLocaleString("en-us")}
+                          {modal?.total?.toLocaleString("en-us")}
                         </Typography>
                       </td>
                     </tr>
@@ -432,16 +441,26 @@ export default function Admin(props) {
                 </table>
                 <div className="flex justify-end gap-3 mr-4">
                   <div>
-                    <Button className="bg-[#FF0742]" onClick={()=>{
-                      setModal(modal.Status = "Cancel")
-                      setPayOpen((pay) => !pay);
-                    }}>Cancel</Button>
+                    <Button
+                      className="bg-[#FF0742]"
+                      onClick={() => {
+                        setModal((modal.Status = "Cancel"));
+                        setPayOpen((pay) => !pay);
+                      }}
+                    >
+                      Cancel
+                    </Button>
                   </div>
                   <div>
-                    <Button className="bg-[#0ACF83]" onClick={()=>{
-                      setModal(modal.Status = "Approve")
-                      setPayOpen((pay) => !pay);
-                    }}>Approve</Button>
+                    <Button
+                      className="bg-[#0ACF83]"
+                      onClick={() => {
+                        setModal((modal.Status = "Approve"));
+                        setPayOpen((pay) => !pay);
+                      }}
+                    >
+                      Approve
+                    </Button>
                   </div>
                 </div>
               </div>
