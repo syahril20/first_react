@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import Icon from "../assets/IconBlack.png";
 import TF from "../assets/tf.png";
-import { Typography } from "@material-tailwind/react";
+import { Chip, Typography } from "@material-tailwind/react";
 
 import { UserContext } from "./context/context";
 export default function Pay(props) {
@@ -18,13 +18,14 @@ export default function Pay(props) {
   // })
 
   const Trans = state?.user?.transaction
+  const filterTrans = Trans.filter((trans) => trans.status === "Waiting Approve" )
   
   console.log(state?.user, "CEK");
   console.log(Trans, "Trans");
   const classes = "p-4 border-t border-[#B7B7B780] text-[#FF0000]";
   return (
     <>
-      {Trans?.map((trans, idx) => {
+      {filterTrans?.map((trans, idx) => {
         return (
           <div key={idx} className="mt-[10%] mx-[10%] mb-32">
             <div className=" bg-white">
@@ -55,7 +56,17 @@ export default function Pay(props) {
                         {trans?.trip?.country?.name_country}
                       </p>
                       <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center bg-[#ff990070]">
-                        {trans?.status}
+                      <Chip
+                          size="sm"
+                          variant="ghost"
+                          value={trans?.status}
+                          color={trans?.status === "Approve"
+                              ? "green"
+                              : trans?.status === "Pending"
+                              ? "yellow"
+                              : "red"
+                          }
+                        />
                       </p>
                     </div>
                     <div className="flex flex-wrap w-[300px] gap-8">

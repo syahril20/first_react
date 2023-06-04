@@ -1,7 +1,7 @@
 import Search from "../../assets/search.png";
 import Icon from "../../assets/IconBlack.png";
 import TF from "../../assets/tf.png";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Card,
   Typography,
@@ -13,7 +13,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { UserContext } from "../../comp/context/context";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { API } from "../../config/api";
 
 const TABLE_HEAD = [
@@ -148,6 +148,7 @@ export default function Admin(props) {
     const Trans = Users
   
   console.log(Trans, "ANJAY");
+  const [Status, setStatus] = useState()
 
   const handlePay = (para) => {
     setPayOpen((pay) => !pay);
@@ -156,7 +157,24 @@ export default function Admin(props) {
     console.log(id, "DATA MODAL");
   };
 
-  console.log(modal, "DATA MODAL BARU");
+  console.log(Status, "DATA MODAL BARU");
+  
+
+  const handleApprove = useMutation(async (id) => {
+    try {
+      // e.preventDefault();
+    
+      const formData = new FormData();
+      formData.set("status", modal.status);
+
+      const response = await API.patch(`/transaction/${id}`, formData);
+      console.log("Add Trip success : ", response);
+      alert("Data Added");
+    } catch (error) {
+      console.log("Add Trip failed : ", error);
+      alert("gagal");
+    }
+  });
   return (
     <div className="m-[10%]">
       <p className="text-3xl font-bold mb-3">Incoming Transaction</p>
@@ -444,8 +462,9 @@ export default function Admin(props) {
                     <Button
                       className="bg-[#FF0742]"
                       onClick={() => {
-                        setModal((modal.Status = "Cancel"));
+                        setModal((modal.status = "Cancel"));
                         setPayOpen((pay) => !pay);
+                        handleApprove.mutate(modal.id_trans)
                       }}
                     >
                       Cancel
@@ -454,9 +473,10 @@ export default function Admin(props) {
                   <div>
                     <Button
                       className="bg-[#0ACF83]"
-                      onClick={() => {
-                        setModal((modal.Status = "Approve"));
+                      onClick={(e) => {
+                        setModal((modal.status = "Approve"));
                         setPayOpen((pay) => !pay);
+                        handleApprove.mutate(modal.id_trans)
                       }}
                     >
                       Approve
