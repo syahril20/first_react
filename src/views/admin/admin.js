@@ -1,7 +1,7 @@
 import Search from "../../assets/search.png";
 import Icon from "../../assets/IconBlack.png";
 import TF from "../../assets/tf.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Typography,

@@ -60,6 +60,7 @@ function Login(props) {
       // } else if (form?.role_id == 2) {
       //   localStorage.setItem("login", JSON.stringify(form));
       // }
+      window.location.reload()
     } catch (error) {
       const response = await API.post("/login", form);
       console.log("register failed : ", response?.data?.data);

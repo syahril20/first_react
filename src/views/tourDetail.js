@@ -151,14 +151,8 @@ const TourData = [
 function TourDetail(props) {
   const par = useParams();
   const selectTur = TourData.find((id) => id.id === par.id);
-  const [log, setLog] = useState({});
-  console.log(par, "TD");
-  useEffect(() => {
-    const login = JSON.parse(localStorage.getItem("login"));
-    if (login) {
-      setLog(login);
-    }
-  }, []);
+
+
   // {login ? console.log("KIpak"):console.log("login")}
   // console.log(cek.isLogin)
 

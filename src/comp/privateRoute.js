@@ -6,7 +6,7 @@ export function PrivateRouteLogin() {
   const [state] = useContext(UserContext);
 
   if (!state.isLogin) {
-      return <Navigate to="/auth" />;
+      return <Navigate to="/" />;
     }
     return <Outlet />;
 }

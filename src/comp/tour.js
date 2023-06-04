@@ -6,10 +6,12 @@ import Plane from "../assets/plane.png";
 import Meal from "../assets/meal.png";
 import Time from "../assets/time.png";
 import Calendar from "../assets/calendar.png";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Login from "./modals/login";
 import Register from "./modals/register";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { API } from "../config/api";
 
 function Tour(props) {
   const [logOpen, setLogOpen] = useState(false);
@@ -32,19 +34,6 @@ function Tour(props) {
   // console.log(par, "INI PAERTE");
 
   const [add, setAdd] = useState(1);
-  const [total, setTotal] = useState();
-  const handleAdd = () => {
-    setAdd(add + 1);
-  };
-  const handleMin = () => {
-    if (add > 1) {
-      setAdd(add - 1);
-    }
-  };
-
-  useEffect(() => {
-    setTotal(props.data.price * add);
-  }, [add]);
 
   const [logins, setLogins] = useState({});
   useEffect(() => {
@@ -62,11 +51,32 @@ function Tour(props) {
 
     window.location.reload();
   };
+  const [Trip, setTrips] = useState();
+  const { data: Trips } = useQuery("t", async () => {
+    const response = await API.get(`/trip/${par.id}`);
+    return setTrips(response?.data?.data);
+  });
+  const [total, setTotal] = useState(Trip?.price);
+  console.log(Trip?.price);
+  const handleAdd = () => {
+    setAdd(add + 1);
+  };
+  const handleMin = () => {
+    if (add > 1) {
+      setAdd(add - 1);
+    }
+  };
+  useEffect(() => {
+    if (Trip?.price !== 0) {
+      setTotal(Trip?.price * add);
+    }
+  }, [Trip,add]);
+  console.log(Trip, "TRIP ANJAY");
   return (
     <>
       <div className="my-10 mx-[15%]">
-        <p className="text-4xl font-bold">{props.data.fTitle}</p>
-        <p className="text-[#A8A8A8] text-xl">{props.data.place}</p>
+        <p className="text-4xl font-bold">{Trip?.title}</p>
+        <p className="text-[#A8A8A8] text-xl">{Trip?.country?.name_country}</p>
 
         <div className="my-10">
           <div className="grid grid-cols-3 gap-4">
@@ -114,10 +124,20 @@ function Tour(props) {
               </Carousel>
             </div>
             <div className="">
-              <img src={props.data.caro2} alt="waw" onClick={handlePay} className="cursor-pointer"/>
+              <img
+                src={props.data.caro2}
+                alt="waw"
+                onClick={handlePay}
+                className="cursor-pointer"
+              />
             </div>
             <div className="">
-              <img src={props.data.caro3} alt="waw" onClick={handlePay} className="cursor-pointer"/>
+              <img
+                src={props.data.caro3}
+                alt="waw"
+                onClick={handlePay}
+                className="cursor-pointer"
+              />
             </div>
             <div className="relative">
               <p className="absolute font-bold text-lg text-white right-[50%] top-[40%]">
@@ -135,48 +155,47 @@ function Tour(props) {
           className="bg-transparent shadow-none"
         >
           <Card className="">
-          <Carousel
-                className="rounded-xl"
-                prevArrow={({ handlePrev }) => (
-                  <IconButton
-                    variant="text"
-                    color="white"
-                    size="lg"
-                    onClick={handlePrev}
-                    className="!absolute top-2/4 -translate-y-2/4 left-4"
-                  >
-                    <ArrowLeftIcon strokeWidth={2} className="w-6 h-6" />
-                  </IconButton>
-                )}
-                nextArrow={({ handleNext }) => (
-                  <IconButton
-                    variant="text"
-                    color="white"
-                    size="lg"
-                    onClick={handleNext}
-                    className="!absolute top-2/4 -translate-y-2/4 !right-4"
-                  >
-                    <ArrowRightIcon strokeWidth={2} className="w-6 h-6" />
-                  </IconButton>
-                )}
-              >
-                <img
-                  src={props.data.caro1}
-                  alt="image1"
-                  className="h-full w-full object-cover"
-                />
-                <img
-                  src={props.data.caro1}
-                  alt="image1"
-                  className="h-full w-full object-cover"
-                />
-                <img
-                  src={props.data.caro1}
-                  alt="image1"
-                  className="h-full w-full object-cover"
-                />
-               
-              </Carousel>
+            <Carousel
+              className="rounded-xl"
+              prevArrow={({ handlePrev }) => (
+                <IconButton
+                  variant="text"
+                  color="white"
+                  size="lg"
+                  onClick={handlePrev}
+                  className="!absolute top-2/4 -translate-y-2/4 left-4"
+                >
+                  <ArrowLeftIcon strokeWidth={2} className="w-6 h-6" />
+                </IconButton>
+              )}
+              nextArrow={({ handleNext }) => (
+                <IconButton
+                  variant="text"
+                  color="white"
+                  size="lg"
+                  onClick={handleNext}
+                  className="!absolute top-2/4 -translate-y-2/4 !right-4"
+                >
+                  <ArrowRightIcon strokeWidth={2} className="w-6 h-6" />
+                </IconButton>
+              )}
+            >
+              <img
+                src={props.data.caro1}
+                alt="image1"
+                className="h-full w-full object-cover"
+              />
+              <img
+                src={props.data.caro1}
+                alt="image1"
+                className="h-full w-full object-cover"
+              />
+              <img
+                src={props.data.caro1}
+                alt="image1"
+                className="h-full w-full object-cover"
+              />
+            </Carousel>
           </Card>
         </Dialog>
 
@@ -191,7 +210,7 @@ function Tour(props) {
                   alt="waw"
                   className="w-[24px] h-[24px]  mr-3"
                 />
-                <p className="font-bold">{props.data.acomodation}</p>
+                <p className="font-bold">{Trip?.accomodation}</p>
               </div>
             </div>
             <div>
@@ -202,21 +221,23 @@ function Tour(props) {
                   alt="waw"
                   className="w-[24px] h-[24px]  mr-3"
                 />
-                <p className="font-bold">{props.data.transportation}</p>
+                <p className="font-bold">{Trip?.transportation}</p>
               </div>
             </div>
             <div>
               <label className="text-[#A8A8A8] text-sm ">Eat</label>
               <div className="flex items-center">
                 <img src={Meal} alt="waw" className="w-[24px] h-[24px]  mr-3" />
-                <p className="font-bold">{props.data.eat}</p>
+                <p className="font-bold">{Trip?.eat}</p>
               </div>
             </div>
             <div>
               <label className="text-[#A8A8A8] text-sm ">Duration</label>
               <div className="flex items-center">
                 <img src={Time} alt="waw" className="w-[24px] h-[24px]  mr-3" />
-                <p className="font-bold">{props.data.duration}</p>
+                <p className="font-bold">
+                  {Trip?.day} Days {Trip?.night} Night
+                </p>
               </div>
             </div>
             <div>
@@ -227,21 +248,19 @@ function Tour(props) {
                   alt="waw"
                   className="w-[24px] h-[24px]  mr-3"
                 />
-                <p className="font-bold">{props.data.dateTrip}</p>
+                <p className="font-bold">{Trip?.date_trip}</p>
               </div>
             </div>
           </div>
         </div>
         <div>
           <p className="font-bold mt-10 text-lg">Description</p>
-          <p className="text-[#A8A8A8]">
-            <b>{props.place}</b> {props.data.desc}
-          </p>
+          <p className="text-[#A8A8A8]">{Trip?.description}</p>
         </div>
         <div className="flex justify-between">
           <div className="mt-10 flex gap-2">
             <p className="text-[#FFAF00] text-2xl font-bold">
-              {props.data.price.toLocaleString("en-us")}
+              {Trip?.price?.toLocaleString("en-us")}
             </p>
             <p className="text-2xl font-bold"> / Person</p>
           </div>

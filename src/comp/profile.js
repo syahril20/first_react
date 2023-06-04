@@ -6,6 +6,8 @@ import Pic from "../assets/picProfile.png";
 import Icon from "../assets/IconBlack.png";
 import QR from "../assets/qr-code.png";
 import { Typography } from "@material-tailwind/react";
+import { useContext } from "react";
+import { UserContext } from "./context/context";
 export default function Profile(props) {
   const persInfo = "flex items-center gap-4";
   const persH = "flex flex-col gap-1";
@@ -32,6 +34,8 @@ export default function Profile(props) {
     },
   ];
 
+  const [state] = useContext(UserContext);
+  console.log(state?.user, "PROFILE");
   return (
     <>
       <div id="card" className="mt-[10%] mx-[20%] bg-white rounded-lg ">
@@ -47,7 +51,7 @@ export default function Profile(props) {
                   <img alt="waw" src={User} className="w-[25px]" />
                 </div>
                 <div className={persH}>
-                  <p className={persName1}>Radif Ganteng</p>
+                  <p className={persName1}>{state?.user?.name}</p>
                   <p className={persName2}>Full Name</p>
                 </div>
               </div>
@@ -56,7 +60,7 @@ export default function Profile(props) {
                   <img alt="waw" src={Mail} className="w-[25px]" />
                 </div>
                 <div className={persH}>
-                  <p className={persName1}>radifgans@gmail.com</p>
+                  <p className={persName1}>{state?.user?.email}</p>
                   <p className={persName2}>Email</p>
                 </div>
               </div>
@@ -65,7 +69,7 @@ export default function Profile(props) {
                   <img alt="waw" src={Phone} className="w-[25px]" />
                 </div>
                 <div className={persH}>
-                  <p className={persName1}>0812-8623-8911</p>
+                  <p className={persName1}>{state?.user?.phone}</p>
                   <p className={persName2}>Mobile phone</p>
                 </div>
               </div>
@@ -75,7 +79,7 @@ export default function Profile(props) {
                 </div>
                 <div className={persH}>
                   <p className={persName1}>
-                    Perumahan Permata Bintaro Residence C-3
+                    {state?.user?.address}
                   </p>
                   <p className={persName2}>Address</p>
                 </div>
