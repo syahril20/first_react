@@ -27,6 +27,7 @@ const reducer = (state, action) => {
     case "LOGOUT":
       // Remove localstorage item with key "token" here ...
       localStorage.removeItem("token");
+      localStorage.removeItem("Trans");
       window.location.reload();
 
       return {

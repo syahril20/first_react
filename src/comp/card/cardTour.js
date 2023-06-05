@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/context";
 
 // import CardDetail from './cardDetail'
@@ -12,7 +12,9 @@ function Card(props) {
   return (
     <div className="flex flex-col items-center">
       <div className="bg-white p-3 rounded  w-[330px] relative">
-        <img src={props.image} className="h-[300px] object-cover" alt="waw" />
+        <Link to={`/detail/${props.id}`}>
+          <img src={props.image} className="h-[300px] object-cover" alt="waw" />
+        </Link>
 
         <p className="bg-white absolute rounded-l-lg w-[60px] py-1 top-5 left-[260px] flex justify-center">
           {props.quota}

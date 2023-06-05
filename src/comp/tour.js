@@ -64,16 +64,6 @@ function Tour(props) {
     }, 500);
   };
 
-  const [total, setTotal] = useState(Trip?.price);
-
-  const handleAdd = () => {
-    setAdd(add + 1);
-  };
-  const handleMin = () => {
-    if (add > 1) {
-      setAdd(add - 1);
-    }
-  };
   const [state] = useContext(UserContext);
   var d = new Date();
   var options = {
@@ -87,7 +77,21 @@ function Tour(props) {
   var day = d.toLocaleDateString("en-US", optionsDay);
   var formattedDate = d.toLocaleDateString("en-US", options);
 
-  console.log(formattedDate);
+  console.log(Trip, "ANJAAY");
+  const handleAdd = () => {
+    if (add < Trip?.quota) {
+      setAdd(add + 1);
+    }else{
+      alert("FULL OM")
+    }
+  };
+  const handleMin = () => {
+    if (add > 1) {
+      setAdd(add - 1);
+    }
+  };
+  const [total, setTotal] = useState(Trip?.price);
+
   useEffect(() => {
     if (Trip?.price !== 0) {
       setTotal(Trip?.price * add);
@@ -96,14 +100,13 @@ function Tour(props) {
         user: state?.user,
         qty: add,
         total: Trip?.price * add,
-        date_now : formattedDate,
-        day_now : day,
-        status : "Waiting Payment"
+        date_now: formattedDate,
+        day_now: day,
+        status: "Waiting Payment",
       });
+
     }
   }, [add, Trip?.price]);
-
-  useEffect(() => {}, [add, Trip?.price]);
 
   console.log(Trans, total, "TRIP ANJAY");
 
@@ -118,47 +121,11 @@ function Tour(props) {
         <div className="my-10">
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-3 ">
-              <Carousel
-                className="rounded-xl"
-                prevArrow={({ handlePrev }) => (
-                  <IconButton
-                    variant="text"
-                    color="white"
-                    size="lg"
-                    onClick={handlePrev}
-                    className="!absolute top-2/4 -translate-y-2/4 left-4"
-                  >
-                    <ArrowLeftIcon strokeWidth={2} className="w-6 h-6" />
-                  </IconButton>
-                )}
-                nextArrow={({ handleNext }) => (
-                  <IconButton
-                    variant="text"
-                    color="white"
-                    size="lg"
-                    onClick={handleNext}
-                    className="!absolute top-2/4 -translate-y-2/4 !right-4"
-                  >
-                    <ArrowRightIcon strokeWidth={2} className="w-6 h-6" />
-                  </IconButton>
-                )}
-              >
-                <img
-                  src={props.data.caro1}
-                  alt="image1"
-                  className="h-full w-full object-cover"
-                />
-                <img
-                  src={props.data.caro1}
-                  alt="image2"
-                  className="h-full w-full object-cover"
-                />
-                <img
-                  src={props.data.caro1}
-                  alt="image3"
-                  className="h-full w-full object-cover"
-                />
-              </Carousel>
+              <img
+                src={Trip?.image}
+                alt="image1"
+                className="h-full w-full object-cover rounded-lg"
+              />
             </div>
             <div className="">
               <img

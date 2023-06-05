@@ -9,31 +9,12 @@ import QR from "../assets/qr-code.png";
 import { Chip, Typography } from "@material-tailwind/react";
 import { useContext } from "react";
 import { UserContext } from "./context/context";
-export default function Profile(props) {
+export default function Profile() {
+
   const persInfo = "flex items-center gap-4";
   const persH = "flex flex-col gap-1";
   const persName1 = "font-bold text-sm";
   const persName2 = "text-xs text-[#8A8C90]";
-  const TABLE_HEAD = ["No", "Full Name", "Gender", "Phone", "", ""];
-  console.log(props);
-  const TABLE_ROWS = [
-    {
-      No: 1,
-      FullName: "Radif Ganteng",
-      Gender: "Male",
-      Phone: "083896833112",
-      Qty: "Qty",
-      Jumlah: ": 1",
-    },
-    {
-      No: "",
-      FullName: "",
-      Gender: "",
-      Phone: "",
-      Qty: "TOTAL",
-      Jumlah: `IDR. ${props.data[0].price.toLocaleString("en-us")}`,
-    },
-  ];
 
   const [state] = useContext(UserContext);
   console.log(state?.user, "PROFILE");

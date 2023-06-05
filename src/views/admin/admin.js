@@ -1,7 +1,7 @@
 import Search from "../../assets/search.png";
 import Icon from "../../assets/IconBlack.png";
 import TF from "../../assets/tf.png";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Typography,
@@ -12,7 +12,6 @@ import {
   Tooltip,
   Button,
 } from "@material-tailwind/react";
-import { UserContext } from "../../comp/context/context";
 import { useMutation, useQuery } from "react-query";
 import { API } from "../../config/api";
 
@@ -25,121 +24,15 @@ const TABLE_HEAD = [
   "Action",
 ];
 
-const TABLE_ROWS = [
-  {
-    No: 1,
-    Users: "Radif Ganteng",
-    Gender: "Male",
-    Phone: "083896833112",
-    Trip: "6D/4N Fun Tassie Vaca ...",
-    Place: "Australia",
-    Bukti: "bca.jpg",
-    Status: "Pending",
-    Qty: "Qty",
-    Jumlah: ": 1",
-  },
-  {
-    No: 2,
-    Users: "Haris Rahman",
-    Gender: "Male",
-    Phone: "083896833112",
-    Trip: "6D/4N Exciting Summer...",
-    Place: "South Korea",
-    Bukti: "bni.jpg",
-    Status: "Approve",
-    Qty: "Qty",
-    Jumlah: ": 1",
-  },
-  {
-    No: 3,
-    Users: "Amin Subagiyo",
-    Gender: "Male",
-    Phone: "083896833112",
-    Trip: "6D/4N Fun Tassie Vaca ...",
-    Place: "Australia",
-    Bukti: "permata.jpg",
-    Status: "Cancel",
-    Qty: "Qty",
-    Jumlah: ": 1",
-  },
-  {
-    No: 4,
-    Users: "Haris Astina",
-    Gender: "Male",
-    Phone: "083896833112",
-    Trip: "6D/4N Wonderful Autum ...",
-    Place: "South Korea",
-    Bukti: "permata.jpg",
-    Status: "Cancel",
-    Qty: "Qty",
-    Jumlah: ": 1",
-  },
-  {
-    No: 5,
-    Users: "Aziz Oni On",
-    Gender: "Male",
-    Phone: "083896833112",
-    Trip: "6D/4N Magic Tokyo ...",
-    Place: "Japan",
-    Bukti: "bi.jpg",
-    Status: "Pending",
-    Qty: "Qty",
-    Jumlah: ": 1",
-  },
-  {
-    No: 6,
-    Users: "Sugeng No Pants",
-    Gender: "Male",
-    Phone: "083896833112",
-    Trip: "6D/4N Labuan Bajo ...",
-    Place: "Indonesia",
-    Bukti: "bni.jpg",
-    Status: "Approve",
-    Qty: "Qty",
-    Jumlah: ": 1",
-  },
-];
+
 
 export default function Admin(props) {
   const TABLE_HEADS = ["No", "Users", "Gender", "Phone", "", ""];
-  const TABLE_ROWSS = [
-    {
-      No: 1,
-      Users: "Radif Ganteng",
-      Gender: "Male",
-      Phone: "083896833112",
-      Qty: "Qty",
-      Jumlah: ": 1",
-    },
-    {
-      No: "",
-      Users: "",
-      Gender: "",
-      Phone: "",
-      Qty: "TOTAL",
-      Jumlah: `: IDR. ${props.data[0].price.toLocaleString("en-us")}`,
-    },
-  ];
+ 
   const [payOpen, setPayOpen] = useState(false);
   const [modal, setModal] = useState([]);
-  // const update = () => {
-  //   setModal(
-  //     TABLE_ROWSS[0].No = 2
-  //   )
-  // }
 
-  
-  // useEffect(() => {
-  //   setModal(modal);
-  //   console.log(modal);
-  // }, [handlePay]);
-
-  // useEffect(()=>{
-  // },[handlePay])
-  const isLast = TABLE_ROWSS.length - 1;
-  const classes = isLast
-    ? "p-4 border-t border-[#B7B7B780] text-[#FF0000] "
-    : "p-4 border-t border-[#B7B7B780] text-black text-lg";
+  const classes = "p-4 border-t border-[#B7B7B780] text-black text-lg";
     const [Users, setUsers] = useState([])
     const { _ } = useQuery("t", async () => {
       const response = await API.get("/transaction");
@@ -148,7 +41,6 @@ export default function Admin(props) {
     const Trans = Users
   
   console.log(Trans, "ANJAY");
-  const [Status, setStatus] = useState()
 
   const handlePay = (para) => {
     setPayOpen((pay) => !pay);
@@ -156,9 +48,6 @@ export default function Admin(props) {
     setModal(id);
     console.log(id, "DATA MODAL");
   };
-
-  console.log(Status, "DATA MODAL BARU");
-  
 
   const handleApprove = useMutation(async (id) => {
     try {

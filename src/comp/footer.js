@@ -1,7 +1,7 @@
 import Palm2 from "../assets/Palm2.png";
 function Footer(props) {
   return (
-    <div className={props.isHome === true ? "relative" : ""}>
+    <div className={props.isHome === true ? "relative mt-40" : ""}>
       <footer className="w-full absolute bottom-0">
         <div className="bg-[#FFAF00] relative">
           <p className="text-center text-white p-2">

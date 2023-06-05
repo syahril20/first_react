@@ -2,6 +2,7 @@ import { useState } from "react";
 import Attach from "../../assets/attach.png";
 import { API } from "../../config/api";
 import { useMutation, useQuery } from "react-query";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function AddTrip() {
   const putClass =
@@ -22,7 +23,7 @@ export default function AddTrip() {
   // const handleSubmit = () => {
   //   localStorage.setItem("Trip", JSON.stringify(trip));
   // };
-
+  const nav = useNavigate()
   const handleSubmit = useMutation(async (e) => {
     try {
       e.preventDefault();
@@ -45,22 +46,11 @@ export default function AddTrip() {
       formData.set("quota", trip?.quota);
       formData.set("description", trip?.description);
       formData.set("image", trip?.image[0], trip?.image[0].name);
-      // setTrip({
-      //   title: "",
-      //   country: "",
-      //   accomodation: "",
-      //   transportation: "",
-      //   eat: "",
-      //   day: "",
-      //   night: "",
-      //   price: "",
-      //   quota: "",
-      //   description: "",
-      //   image: "",
-      // });
+   
       const response = await API.post("/trip", formData, config);
       console.log("Add Trip success : ", response);
       alert("Data Added");
+      window.location.reload(nav('/in-trip'))
     } catch (error) {
       console.log("Add Trip failed : ", error);
       alert("gagal");
@@ -180,7 +170,7 @@ export default function AddTrip() {
             <div>
               <label className="font-bold text-lg">Date Trip</label>
               <input
-                type="text"
+                type="date"
                 className={`${putClass}`}
                 onChange={(e) => {
                   setTrip({ ...trip, date_trip: e.target.value });

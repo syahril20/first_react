@@ -12,7 +12,6 @@ import Admin from "./admin/admin";
 import InTrip from "./admin/inTrip";
 import AddTrip from "./admin/addTrip";
 
-// const Tour = [
 //   {
 //     id: 1,
 //     img: pic1,
@@ -166,7 +165,7 @@ function TourDetail(props) {
         ) : props.pages === "payment" ? (
           <Payment data={selectTur}/>
         ) : props.pages === "profile" ? (
-          <Profile data={TourData}/>
+          <Profile/>
         ) : props.pages === "admin" ? (
           <Admin data={TourData}/>
         ) : props.pages === "inTrip" ? (
