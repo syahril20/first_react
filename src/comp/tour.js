@@ -76,10 +76,10 @@ function Tour(props) {
   };
   var day = d.toLocaleDateString("en-US", optionsDay);
   var formattedDate = d.toLocaleDateString("en-US", options);
-
+  const count = Trip?.quota - Trip?.current_quota
   console.log(Trip, "ANJAAY");
   const handleAdd = () => {
-    if (add < Trip?.quota) {
+    if (add < count) {
       setAdd(add + 1);
     }else{
       alert("FULL OM")

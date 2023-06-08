@@ -80,19 +80,6 @@ function Payment(props) {
       formData.set("status", trip?.status);
       formData.set("attachment", trip?.attachment);
       formData.set("id_trip", trip?.id_trip);
-      // setTrip({
-      //   title: "",
-      //   country: "",
-      //   accomodation: "",
-      //   transportation: "",
-      //   eat: "",
-      //   day: "",
-      //   night: "",
-      //   price: "",
-      //   quota: "",
-      //   description: "",
-      //   image: "",
-      // });
       const response = await API.post("/transaction", formData, config);
       console.log("Add Trip success : ", response);
       alert("Data Added");

@@ -24,41 +24,57 @@ const TABLE_HEAD = [
   "Action",
 ];
 
-
-
 export default function Admin(props) {
   const TABLE_HEADS = ["No", "Users", "Gender", "Phone", "", ""];
- 
+
   const [payOpen, setPayOpen] = useState(false);
   const [modal, setModal] = useState([]);
 
   const classes = "p-4 border-t border-[#B7B7B780] text-black text-lg";
-    const [Users, setUsers] = useState([])
-    const { _ } = useQuery("t", async () => {
-      const response = await API.get("/transaction");
-      return setUsers(response?.data?.data)
-    })
-    const Trans = Users
-  
-  console.log(Trans, "ANJAY");
+  const [Users, setUsers] = useState([]);
+  const { _ } = useQuery("t", async () => {
+    const response = await API.get("/transaction");
+    return setUsers(response?.data?.data);
+  });
+  const Trans = Users;
+
+  const [Trip, setTrip] = useState({});
+  const { boleh } = useQuery("Trip", async () => {
+    const response = await API.get("/trip");
+    return setTrip(response?.data?.data);
+  });
+
+  console.log(modal?.counter_qty, "Data Modal");
+  console.log(modal?.trip, "DATA Trip");
+  // console.log(modal.current_quota, "TRIP");
 
   const handlePay = (para) => {
     setPayOpen((pay) => !pay);
     const id = Trans[para];
     setModal(id);
-    console.log(id, "DATA MODAL");
   };
 
-  const handleApprove = useMutation(async (id) => {
+  const handleApprove = useMutation(async (id_trans) => {
     try {
       // e.preventDefault();
-    
       const formData = new FormData();
-      formData.set("status", modal.status);
+      const count = modal?.trip?.current_quota + modal?.counter_qty
+      if (modal.status === "Cancel") {
+          formData.set("status", modal.status);
+          const response = await API.patch(`/transaction/${id_trans}`, formData);
+          alert("Data Canceled");
+      } else if(modal.status === "Approve" && count <= modal?.trip?.quota){
+        formData.set("status", modal.status);
+        const formTrip = new FormData();
+        formTrip.set("current_quota", modal?.trip?.current_quota + modal?.counter_qty);
+        const response = await API.patch(`/transaction/${id_trans}`, formData);
+        const res = await API.patch(`/trip/${modal?.id_trip}`, formTrip);
+        setTrip({});
+        alert("Data Added");
+      }else{
+        alert("Penuh Om")
+      }
 
-      const response = await API.patch(`/transaction/${id}`, formData);
-      console.log("Add Trip success : ", response);
-      alert("Data Added");
     } catch (error) {
       console.log("Add Trip failed : ", error);
       alert("gagal");
@@ -100,7 +116,7 @@ export default function Admin(props) {
                           color="blue-gray"
                           className="font-bold"
                         >
-                          {idx+1}
+                          {idx + 1}
                         </Typography>
                       </div>
                     </td>
@@ -137,7 +153,8 @@ export default function Admin(props) {
                           size="sm"
                           variant="ghost"
                           value={user?.status}
-                          color={user?.status === "Approve"
+                          color={
+                            user?.status === "Approve"
                               ? "green"
                               : user?.status === "Pending"
                               ? "yellow"
@@ -198,7 +215,9 @@ export default function Admin(props) {
                     <p className="text-xl font-extrabold">
                       {modal?.trip?.title}
                     </p>
-                    <p className="text-sm text-[#959595]">{modal?.trip?.country?.name_country}</p>
+                    <p className="text-sm text-[#959595]">
+                      {modal?.trip?.country?.name_country}
+                    </p>
                     <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center ">
                       <Chip
                         size="sm"
@@ -351,9 +370,11 @@ export default function Admin(props) {
                     <Button
                       className="bg-[#FF0742]"
                       onClick={() => {
+                       
                         setModal((modal.status = "Cancel"));
                         setPayOpen((pay) => !pay);
-                        handleApprove.mutate(modal.id_trans)
+                        handleApprove.mutate(modal?.id_trans);
+                        console.log(modal);
                       }}
                     >
                       Cancel
@@ -365,7 +386,7 @@ export default function Admin(props) {
                       onClick={(e) => {
                         setModal((modal.status = "Approve"));
                         setPayOpen((pay) => !pay);
-                        handleApprove.mutate(modal.id_trans)
+                        handleApprove.mutate(modal.id_trans);
                       }}
                     >
                       Approve

@@ -23,6 +23,7 @@ function TourData(props) {
               price={tour?.price}
               place={tour?.place}
               quota={tour?.quota}
+              current_quota={tour?.current_quota}
               isTrip={props.isTrip}
             />
           );

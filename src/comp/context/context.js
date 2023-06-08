@@ -23,7 +23,10 @@ const reducer = (state, action) => {
         isLogin: true,
         user: payload,
       };
-    // add case "AUTH_ERROR" here ..
+    case "AUTH_ERROR":
+      localStorage.removeItem("Trans");
+      localStorage.removeItem("token");
+      window.location.reload()
     case "LOGOUT":
       // Remove localstorage item with key "token" here ...
       localStorage.removeItem("token");

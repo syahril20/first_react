@@ -39,8 +39,6 @@ export default function Nav() {
     dispatch({
       type: "LOGOUT"
     })
-    // window.location.reload();
-    // localStorage.removeItem("token");
   };
 
   console.log(state.user, "KIPAK");
