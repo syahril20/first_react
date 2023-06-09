@@ -15,8 +15,8 @@ import Calendar from "../assets/calendar.png";
 import React, { useContext, useEffect, useState } from "react";
 import Login from "./modals/login";
 import Register from "./modals/register";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
 import { API } from "../config/api";
 import { UserContext } from "./context/context";
 
@@ -47,7 +47,13 @@ function Tour(props) {
 
   const [add, setAdd] = useState(1);
 
-  const [Trip, setTrips] = useState();
+  const [Trip, setTrips] = useState({
+    counter_qty: "",
+    total: "",
+    status: "",
+    attachment: "",
+    id_trip: "",
+  });
   const { data: Trips } = useQuery("t", async () => {
     const response = await API.get(`/trip/${par.id}`);
     return setTrips(response?.data?.data);
@@ -55,19 +61,22 @@ function Tour(props) {
 
   const [Trans, setTrans] = useState();
 
-  const paym = () => {
-    // pay(`/payment/${par.id}`);
-    // localStorage.removeItem("qty");
-    // localStorage.removeItem("total");
+  // const paym = () => {
+  //   // pay(`/payment/${par.id}`);
+  //   // localStorage.removeItem("qty");
+  //   // localStorage.removeItem("total");
 
-    setTimeout(() => {
-      localStorage.setItem("Trans", JSON.stringify(Trans));
-      // localStorage.setItem("qty", JSON.stringify(add));
-      // localStorage.setItem("total", JSON.stringify(total));
+  //   setTimeout(() => {
+  //     localStorage.setItem("Trans", JSON.stringify(Trans));
+  //     // localStorage.setItem("qty", JSON.stringify(add));
+  //     // localStorage.setItem("total", JSON.stringify(total));
 
-      window.location.reload(pay(`/payment/${par.id}`));
-    }, 500);
-  };
+  //     window.location.reload(pay(`/payment/${par.id}`));
+  //   }, 500);
+  // };
+
+ 
+  
 
   const [state] = useContext(UserContext);
   var d = new Date();
@@ -101,21 +110,95 @@ function Tour(props) {
     if (Trip?.price !== 0) {
       setTotal(Trip?.price * add);
       setTrans({
+        id_trip: Trip?.id_trip,
         trip: Trip,
         user: state?.user,
-        qty: add,
+        counter_qty: add,
         total: Trip?.price * add,
         date_now: formattedDate,
         day_now: day,
-        status: "Waiting Payment",
+        status: "success",
+        attachment: "Kosong"
       });
 
     }
   }, [add, Trip?.price]);
 
-  console.log(Trans, total, "TRIP ANJAY");
+  console.log(Trans, "TRANS");
 
   console.log(state?.isLogin, "CUK");
+
+  useEffect(() => {
+    //change this to the script source you want to load, for example this is snap.js sandbox env
+    const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    //change this according to your client-key
+    const myMidtransClientKey = process.env.REACT_APP_MIDTRANS_CLIENT_KEY;
+  
+    let scriptTag = document.createElement("script");
+    scriptTag.src = midtransScriptUrl;
+    // optional if you want to set script attribute
+    // for example snap.js have data-client-key attribute
+    scriptTag.setAttribute("data-client-key", myMidtransClientKey);
+  
+    document.body.appendChild(scriptTag);
+    return () => {
+      document.body.removeChild(scriptTag);
+    };
+  }, []);
+
+  const paym = useMutation(async (e) => {
+    try {
+      e.preventDefault();
+  
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      };
+  
+      const data = {
+        counter_qty: Trans?.counter_qty,
+        total: Trans?.total,
+        status: Trans?.status,
+        attachment: Trans?.attachment,
+        id_trip: Trans?.id_trip,
+        id_user: Trans?.user?.id,
+      };
+  
+      const body = JSON.stringify(data);
+      console.log(data, "INI FORM");
+  
+      const response = await API.post("/transaction", body, config);
+      console.log("transaction success :", response)
+  
+      const token = response?.data?.data?.token;
+      console.log(token, "INI TOKEN CUK");
+      window.snap.pay(token, {
+        onSuccess: function (result) {
+          /* You may add your own implementation here */
+          console.log(result);
+          Navigate("/profile");
+        },
+        onPending: function (result) {
+          /* You may add your own implementation here */
+          console.log(result);
+          Navigate("/profile");
+        },
+        onError: function (result) {
+          /* You may add your own implementation here */
+          console.log(result);
+          Navigate("/profile");
+        },
+        onClose: function () {
+          /* You may add your own implementation here */
+          alert("you closed the popup without finishing the payment");
+        },
+      });
+    } catch (error) {
+      console.log("transaction failed : ", error);
+      console.log(FormData, "INI FORM");
+    }
+  });
 
   return (
     
@@ -305,7 +388,7 @@ function Tour(props) {
           <div></div>
           <button
             // onClick={handleLogin}
-            onClick={state?.isLogin === true ? paym : handleLogin}
+            onClick={state?.isLogin === true ? (e) => paym.mutate(e) : handleLogin}
             className="text-white font-semibold border border-[#FFAF00] rounded px-12 py-3 ml-2 bg-[#FFAF00]"
           >
             BOOK NOW
