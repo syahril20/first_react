@@ -1,10 +1,6 @@
-
-import TourData from "../../comp/tourData";
 import { useNavigate } from "react-router-dom";
-const Trip = JSON.parse(localStorage.getItem("Trip"));
-console.log(Trip);
+import TourData from "../../comp/tourData";
 export default function InTrip(props) {
-
   const add = useNavigate();
 
   return (
@@ -23,7 +19,6 @@ export default function InTrip(props) {
       <div className="mt-5 mb-[20%]">
         <TourData isTrip={true} />
       </div>
-      
     </>
   );
 }

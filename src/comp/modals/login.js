@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "react-query";
 import { API, setAuthToken } from "../../config/api";
 import { UserContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function Login(props) {
   //   const { data: User } = useQuery("t", async () => {
@@ -29,7 +30,15 @@ function Login(props) {
       props.handleLogin(false);
       const response = await API.post("/login", form);
       console.log("Login Success : ", response?.data?.data);
-      alert("Login Sukses");
+      let timerInterval;
+        Swal.fire({
+          title: "LOGIN SUKSES",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
 
       dispatch({
         type: "LOGIN_SUCCESS",
@@ -64,7 +73,15 @@ function Login(props) {
     } catch (error) {
       const response = await API.post("/login", form);
       console.log("register failed : ", response?.data?.data);
-      alert("gagal");
+      let timerInterval;
+        Swal.fire({
+          title: "LOGIN GAGAL",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
     }
   });
 

@@ -1,7 +1,7 @@
 import Search from "../../assets/search.png";
 import Icon from "../../assets/IconBlack.png";
 import TF from "../../assets/tf.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Typography,
@@ -12,8 +12,9 @@ import {
   Tooltip,
   Button,
 } from "@material-tailwind/react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { API } from "../../config/api";
+import Swal from "sweetalert2";
 
 const TABLE_HEAD = [
   "No",
@@ -30,6 +31,8 @@ export default function Admin(props) {
   const [payOpen, setPayOpen] = useState(false);
   const [modal, setModal] = useState([]);
 
+  const queryClient = useQueryClient()
+
   const classes = "p-4 border-t border-[#B7B7B780] text-black text-lg";
   const [Users, setUsers] = useState([]);
   const { _ } = useQuery("t", async () => {
@@ -42,7 +45,7 @@ export default function Admin(props) {
   const { boleh } = useQuery("Trip", async () => {
     const response = await API.get("/trip");
     return setTrip(response?.data?.data);
-  });
+  });  
 
   console.log(modal?.counter_qty, "Data Modal");
   console.log(modal?.trip, "DATA Trip");
@@ -55,29 +58,66 @@ export default function Admin(props) {
   };
 
   const handleApprove = useMutation(async (id_trans) => {
+    
     try {
       // e.preventDefault();
       const formData = new FormData();
-      const count = modal?.trip?.current_quota + modal?.counter_qty
+      const count = modal?.trip?.current_quota + modal?.counter_qty;
       if (modal.status === "Cancel") {
-          formData.set("status", modal.status);
-          const response = await API.patch(`/transaction/${id_trans}`, formData);
-          alert("Data Canceled");
-      } else if(modal.status === "Approve" && count <= modal?.trip?.quota){
+        formData.set("status", modal.status);
+        const response = await API.patch(`/transaction/${id_trans}`, formData);
+        let timerInterval;
+        Swal.fire({
+          title: "DATA CANCELED",
+          timer: 2000,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
+      } else if (modal.status === "Approve" && count <= modal?.trip?.quota) {
         formData.set("status", modal.status);
         const formTrip = new FormData();
-        formTrip.set("current_quota", modal?.trip?.current_quota + modal?.counter_qty);
+        formTrip.set(
+          "current_quota",
+          modal?.trip?.current_quota + modal?.counter_qty
+        );
         const response = await API.patch(`/transaction/${id_trans}`, formData);
         const res = await API.patch(`/trip/${modal?.id_trip}`, formTrip);
         setTrip({});
-        alert("Data Added");
-      }else{
-        alert("Penuh Om")
+        let timerInterval;
+        Swal.fire({
+          title: "DATA ADDED",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
+      } else {
+        let timerInterval;
+        Swal.fire({
+          title: "PENUH PAK!!!",
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
       }
-
     } catch (error) {
       console.log("Add Trip failed : ", error);
-      alert("gagal");
+      let timerInterval;
+        Swal.fire({
+          title: "GAGAL",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
     }
   });
   return (
@@ -370,7 +410,6 @@ export default function Admin(props) {
                     <Button
                       className="bg-[#FF0742]"
                       onClick={() => {
-                       
                         setModal((modal.status = "Cancel"));
                         setPayOpen((pay) => !pay);
                         handleApprove.mutate(modal?.id_trans);

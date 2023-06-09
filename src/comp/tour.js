@@ -20,6 +20,11 @@ import { useQuery } from "react-query";
 import { API } from "../config/api";
 import { UserContext } from "./context/context";
 
+import caro1 from "../assets/caro1.png";
+import caro2 from "../assets/caro2.png";
+import caro3 from "../assets/caro3.png";
+import caro4 from "../assets/caro4.png";
+
 function Tour(props) {
   const [logOpen, setLogOpen] = useState(false);
   const [regOpen, setRegOpen] = useState(false);
@@ -113,8 +118,10 @@ function Tour(props) {
   console.log(state?.isLogin, "CUK");
 
   return (
+    
+    
     <>
-      <div className="my-10 mx-[15%]">
+    {!Trip ? "KOSONG PAK": <div className="my-10 mx-[15%]">
         <p className="text-4xl font-bold">{Trip?.title}</p>
         <p className="text-[#A8A8A8] text-xl">{Trip?.country?.name_country}</p>
 
@@ -129,7 +136,7 @@ function Tour(props) {
             </div>
             <div className="">
               <img
-                src={props.data.caro2}
+                src={caro2}
                 alt="waw"
                 onClick={handlePay}
                 className="cursor-pointer"
@@ -137,7 +144,7 @@ function Tour(props) {
             </div>
             <div className="">
               <img
-                src={props.data.caro3}
+                src={caro3}
                 alt="waw"
                 onClick={handlePay}
                 className="cursor-pointer"
@@ -147,7 +154,7 @@ function Tour(props) {
               <p className="absolute font-bold text-lg text-white right-[50%] top-[40%]">
                 +5
               </p>
-              <img src={props.data.caro4} alt="waw" className="" />
+              <img src={caro4} alt="waw" className="" />
             </div>
           </div>
         </div>
@@ -185,17 +192,17 @@ function Tour(props) {
               )}
             >
               <img
-                src={props.data.caro1}
+                src={caro1}
                 alt="image1"
                 className="h-full w-full object-cover"
               />
               <img
-                src={props.data.caro1}
+                src={caro1}
                 alt="image1"
                 className="h-full w-full object-cover"
               />
               <img
-                src={props.data.caro1}
+                src={caro1}
                 alt="image1"
                 className="h-full w-full object-cover"
               />
@@ -302,6 +309,7 @@ function Tour(props) {
             className="text-white font-semibold border border-[#FFAF00] rounded px-12 py-3 ml-2 bg-[#FFAF00]"
           >
             BOOK NOW
+            
           </button>
           <Login
             logOpen={logOpen}
@@ -311,7 +319,9 @@ function Tour(props) {
           <Register regOpen={regOpen} handleRegister={handleRegister} />
         </div>
       </div>
+      }
       {props.f}
+      
     </>
   );
 }

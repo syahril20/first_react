@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 import Attach from "../../assets/attach.png";
 import { API } from "../../config/api";
-import { useMutation, useQuery } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function AddTrip() {
   const putClass =
@@ -16,6 +17,8 @@ export default function AddTrip() {
     day: "",
     night: "",
     price: "",
+    quota: "",
+    current_quota: 0,
     quota: "",
     description: "",
     image: "",
@@ -44,16 +47,33 @@ export default function AddTrip() {
       formData.set("date_trip", trip?.date_trip);
       formData.set("price", trip?.price);
       formData.set("quota", trip?.quota);
+      formData.set("current_quota", trip?.current_quota);
       formData.set("description", trip?.description);
       formData.set("image", trip?.image[0], trip?.image[0].name);
    
       const response = await API.post("/trip", formData, config);
       console.log("Add Trip success : ", response);
-      alert("Data Added");
+      let timerInterval;
+        Swal.fire({
+          title: "DATA ADDED",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
       window.location.reload(nav('/in-trip'))
     } catch (error) {
       console.log("Add Trip failed : ", error);
-      alert("gagal");
+      let timerInterval;
+        Swal.fire({
+          title: "GAGAL",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            clearInterval(timerInterval);
+          },
+        });
     }
   });
 
