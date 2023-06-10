@@ -2,7 +2,7 @@ import  axios from 'axios';
 
 // BASE URL
 export const API = axios.create({
-    baseURL: 'https://containers-us-west-55.railway.app/api/v1/'
+    baseURL: process.env.REACT_APP_BASE_URL
 })
 
 // SET AUTHORIZATION TOKEN
