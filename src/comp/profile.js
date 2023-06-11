@@ -4,13 +4,26 @@ import Phone from "../assets/phone.png";
 import Maps from "../assets/maps.png";
 import Pic from "../assets/picProfile.png";
 import Icon from "../assets/IconBlack.png";
-import TF from "../assets/tf.png";
 import QR from "../assets/qr-code.png";
-import { Chip, Typography } from "@material-tailwind/react";
-import { useContext } from "react";
+import {
+  Button,
+  Card,
+  Chip,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  Input,
+  Typography,
+} from "@material-tailwind/react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "./context/context";
-export default function Profile() {
+import { useMutation } from "react-query";
+import { API, setAuthToken } from "../config/api";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
+export default function Profile() {
   const persInfo = "flex items-center gap-4";
   const persH = "flex flex-col gap-1";
   const persName1 = "font-bold text-sm";
@@ -19,8 +32,51 @@ export default function Profile() {
   const [state] = useContext(UserContext);
   console.log(state?.user, "PROFILE");
   const classes = "p-4 border-t border-[#B7B7B780] text-[#FF0000]";
-  const Trans = state?.user?.transaction
-  const filterTrans = Trans.filter((trans) => trans.status === "Approve" )
+  const Trans = state?.user?.transaction;
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(!open);
+
+  const [data, setData] = useState({});
+  const [pp, setPp] = useState(null);
+
+  useEffect(() => {
+    setData(state?.user);
+  }, []);
+  console.log(data, "INI DATA");
+  const nav = useNavigate();
+  const handleUpdate = useMutation(async (e) => {
+    try {
+      e.preventDefault();
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
+
+      const formData = new FormData();
+      formData.set("name", data?.name);
+      formData.set("email", data?.email);
+      formData.set("phone", data?.phone);
+      formData.set("address", data?.address);
+      if (pp) {
+        formData.set("image", data?.image[0], data?.image[0]?.name);
+      }else{
+        
+      }
+      console.log(data?.image[0], data?.image[0]?.name);
+
+      const response = await API.patch(`/users/${data?.id}`, formData, config);
+      console.log("Edit User success : ", response);
+      Swal.fire("DATA EDITED !");
+      window.location.reload(nav("/profile"));
+    } catch (error) {
+      console.log("Edit User failed : ", error);
+      Swal.fire("FAILED !");
+    }
+  });
+
   return (
     <>
       <div id="card" className="mt-[10%] mx-[20%] bg-white rounded-lg ">
@@ -63,26 +119,127 @@ export default function Profile() {
                   <img alt="waw" src={Maps} className="w-[25px]" />
                 </div>
                 <div className={persH}>
-                  <p className={persName1}>
-                    {state?.user?.address}
-                  </p>
+                  <p className={persName1}>{state?.user?.address}</p>
                   <p className={persName2}>Address</p>
                 </div>
               </div>
             </div>
           </div>
           <div id="right">
-            <img alt="waw" src={Pic} className="rounded-lg" />
+            <img
+              alt="waw"
+              src={state?.user?.image}
+              className="rounded-lg w-[300px]"
+            />
             <div className="">
-              <button className="bg-[#FFAF00] w-full mt-2 rounded-lg py-2 text-white font-bold">
-                Change Photo Profile
+              <button
+                onClick={handleOpen}
+                className="bg-[#FFAF00] w-full mt-2 rounded-lg py-2 text-white font-bold"
+              >
+                Edit Profile
               </button>
             </div>
+
+            <Dialog
+              size="md"
+              open={open}
+              handler={handleOpen}
+              className="bg-transparent shadow-none"
+            >
+              <Card className="mx-auto w-full max-w-[24rem]">
+                <div className="relative w-full max-w-sm max-h-full">
+                  <DialogHeader>Edit Profile.</DialogHeader>
+                  {/* <!-- Modal content --> */}
+                  <div className="bg-white rounded-lg shadow dark:bg-gray-700">
+                    <div className="p-6 space-y-6 overflow-scroll no-scrollbar">
+                      <div className="h-[300px]">
+                        <form onSubmit={(e) => handleUpdate.mutate(e)}>
+                          <DialogBody
+                            divider
+                            className="mx-auto w-full max-w-[24rem] flex flex-col gap-4"
+                          >
+                            <Input
+                              label="Full Name"
+                              value={data?.name}
+                              onChange={(e) => {
+                                setData({ ...data, name: e.target.value });
+                                console.log(e.target.value);
+                              }}
+                            />
+                            <Input
+                              label="Email"
+                              value={data?.email}
+                              onChange={(e) => {
+                                setData({ ...data, email: e.target.value });
+                                console.log(e.target.value);
+                              }}
+                            />
+                            <Input
+                              label="Phone"
+                              value={data?.phone}
+                              onChange={(e) => {
+                                setData({ ...data, phone: e.target.value });
+                                console.log(e.target.value);
+                              }}
+                            />
+                            <Input
+                              label="Address"
+                              value={data?.address}
+                              onChange={(e) => {
+                                setData({ ...data, address: e.target.value });
+                                console.log(e.target.value);
+                              }}
+                            />
+                            <Input
+                              type="file"
+                              onChange={(e) => {
+                                let url = URL.createObjectURL(
+                                  e.target.files[0]
+                                );
+                                if (data?.image) {
+                                  setPp(data?.image);
+                                }
+                                setPp(url);
+                                setData({ ...data, image: e.target.files });
+                                console.log(pp, "INI PHOTO");
+                              }}
+                            />
+                            <img
+                              alt="waw"
+                              src={pp ? pp : state?.user?.image}
+                              className="rounded-lg w-[350px] h-[100%] border border-black"
+                            />
+                          </DialogBody>
+                          <DialogFooter>
+                            <Button
+                              variant="text"
+                              color="red"
+                              onClick={handleOpen}
+                              className="mr-1"
+                            >
+                              <span>Cancel</span>
+                            </Button>
+                            <Button
+                              variant="gradient"
+                              color="green"
+                              onClick={handleOpen}
+                              type="submit"
+                            >
+                              <span>Confirm</span>
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </Dialog>
           </div>
         </div>
       </div>
 
-      {filterTrans?.map((trans, idx) => {
+      {Trans?.map((trans, idx) => {
         return (
           <div key={idx} className="mt-[10%] mx-[10%] mb-32">
             <div className=" bg-white">
@@ -104,22 +261,23 @@ export default function Profile() {
                       </p>
                     </div>
                   </div>
-                  <div id="content" className="flex gap-5 justify-between">
-                    <div>
+                  <div id="content" className="flex gap-2 justify-between">
+                    <div className="w-[30%]">
                       <p className="text-xl font-extrabold">
                         {trans?.trip?.title}
                       </p>
                       <p className="text-sm text-[#959595]">
                         {trans?.trip?.country?.name_country}
                       </p>
-                      <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center bg-[#ff990070]">
-                      <Chip
+                      <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center ">
+                        <Chip
                           size="sm"
                           variant="ghost"
                           value={trans?.status}
-                          color={trans?.status === "Approve"
+                          color={
+                            trans?.status === "success"
                               ? "green"
-                              : trans?.status === "Pending"
+                              : trans?.status === "pending"
                               ? "yellow"
                               : "red"
                           }
@@ -145,7 +303,7 @@ export default function Profile() {
                         <div className="mb-6">
                           <label className="font-extrabold">Duration</label>
                           <p className="text-sm text-[#959595]">
-                            {trans?.trip?.day} Day {trans?.trip?.night} Night 
+                            {trans?.trip?.day} Day {trans?.trip?.night} Night
                           </p>
                         </div>
                         <div>
@@ -158,12 +316,8 @@ export default function Profile() {
                         </div>
                       </div>
                     </div>
-                    <div>
-                      <img
-                        alt="waw"
-                        src={TF}
-                        className="border-2 border-black"
-                      />
+                    <div className="flex flex-col justify-center">
+                      <img alt="waw" src={QR} className="" />
                       <p className="text-sm text-[#959595] text-center">
                         upload payment proof
                       </p>
@@ -304,7 +458,6 @@ export default function Profile() {
                             className=" text-lg font-bold"
                           >
                             : IDR. {trans?.total.toLocaleString("en-us")}
-                            
                           </Typography>
                         </td>
                       </tr>
@@ -316,150 +469,6 @@ export default function Profile() {
           </div>
         );
       })}
-
-      {/* <div className=" mb-60 mx-[10%]">
-        <p className="text-3xl font-extrabold mb-10 mt-20">History Trip</p>
-        <div className="border border-[#B7B7B7] rounded-lg py-4 bg-white">
-          <div className="px-10">
-            <div id="header" className="flex justify-between items-center mb-5">
-              <div>
-                <img src={Icon} alt="waw" />
-              </div>
-              <div className="">
-                <p className="text-3xl font-extrabold text-end mb-2">Booking</p>
-                <p className="text-xl text-[#878787]">
-                  <b>Saturday</b>, 22 July 2020
-                </p>
-              </div>
-            </div>
-            <div id="content" className="flex gap-5 justify-between">
-              <div>
-                <p className="text-xl font-extrabold">{props.data[0].fTitle}</p>
-                <p className="text-sm text-[#959595]">{props.data[0].place}</p>
-                <p className="text-sm text-[#3CF71E] mt-8 w-[120px] text-center bg-[#3bf71e62]">
-                  Approve
-                </p>
-              </div>
-              <div className="flex flex-wrap w-[300px] gap-8">
-                <div>
-                  <div className="mb-6">
-                    <label className="font-extrabold">Date Trip</label>
-                    <p className="text-sm text-[#959595]">
-                      {props.data[0].dateTrip}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="font-extrabold">Accomodation</label>
-                    <p className="text-sm text-[#959595]">
-                      {props.data[0].acomodation}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-6">
-                    <label className="font-extrabold">Duration</label>
-                    <p className="text-sm text-[#959595]">
-                      {props.data[0].duration}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="font-extrabold">transportation</label>
-                    <p className="text-sm text-[#959595]">
-                      {props.data[0].transportation}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <img alt="waw" src={QR} className="border-2 border-black" />
-                <p className="text-sm text-[#959595] text-center">TCK0101</p>
-              </div>
-            </div>
-          </div>
-          <div id="footer">
-            <table className="text-left w-full">
-              <thead>
-                <tr className="">
-                  {TABLE_HEAD.map((head, idx) => (
-                    <th key={idx} className="w-[100px] p-4">
-                      <div
-                        variant="small"
-                        color="blue-gray"
-                        className="leading-none text-lg font-bold"
-                      >
-                        {head}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {TABLE_ROWS.map(
-                  ({ No, FullName, Gender, Phone, Qty, Jumlah }, idx) => {
-                    const isLast = idx === TABLE_ROWS.length - 1;
-                    const classes = isLast
-                      ? "p-4 border-t border-[#B7B7B780] text-[#FF0000] "
-                      : "p-4 border-t border-[#B7B7B780] text-black text-lg";
-                    return (
-                      <tr key={idx}>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            className="text-[#B1B1B1] text-lg"
-                          >
-                            {No}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            className="text-[#B1B1B1] text-lg"
-                          >
-                            {FullName}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            className="text-[#B1B1B1] text-lg"
-                          >
-                            {Gender}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            className="text-[#B1B1B1] text-lg"
-                          >
-                            {Phone}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            className="text-black text-lg font-bold"
-                          >
-                            {Qty}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            as="a"
-                            className=" text-lg font-bold"
-                          >
-                            {Jumlah}
-                          </Typography>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 }

@@ -75,7 +75,7 @@ export default function Nav() {
                             size="sm"
                             alt="candice wu"
                             className=""
-                            src={profil}
+                            src={state?.user?.image}
                           />
                           <ChevronDownIcon
                             strokeWidth={2.5}

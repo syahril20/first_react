@@ -15,15 +15,15 @@ function Register(props) {
     address: "",
     role_id: 2,
   });
-  
+
   const handleRegister = useMutation(async (e) => {
     try {
       e.preventDefault();
-      
+
       const response = await API.post("/register", form);
       console.log("register success : ", response?.data?.data);
-      props.handleRegister(false)
-      Swal.fire("REGISTER SUKSES")
+      props.handleRegister(false);
+      Swal.fire("REGISTER SUKSES");
       setForm({
         name: "",
         email: "",
@@ -33,7 +33,7 @@ function Register(props) {
       });
     } catch (error) {
       console.log("register failed : ", error);
-      Swal.fire("gagal")
+      Swal.fire("gagal");
     }
   });
   return (
@@ -53,9 +53,7 @@ function Register(props) {
               <div className="p-6 space-y-6 overflow-scroll no-scrollbar">
                 <div className="my-10 h-[300px]">
                   <p className="text-center text-5xl mb-10">Register</p>
-                  <form 
-                  
-                  className="" onSubmit={(e) => handleRegister.mutate(e)}>
+                  <form className="" onSubmit={(e) => handleRegister.mutate(e)}>
                     <div className="mb-5">
                       <label className="font-bold text-2xl">Full Name</label>
                       <input
@@ -111,8 +109,7 @@ function Register(props) {
                         className="w-full rounded resize-none border-none bg-[#D2D2D240] h-10"
                       />
                     </div>
-                    <button className="text-center w-full bg-[#FFAF00] mb-5 py-2 rounded-sm text-white font-bold"
-                    >
+                    <button className="text-center w-full bg-[#FFAF00] mb-5 py-2 rounded-sm text-white font-bold">
                       Register
                     </button>
                   </form>
