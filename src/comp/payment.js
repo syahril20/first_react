@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { UserContext } from "./context/context";
 import { useMutation, useQuery } from "react-query";
 import { API } from "../config/api";
+import Swal from "sweetalert2";
 const Trans = JSON.parse(localStorage.getItem("Trans"));
 
 function Payment(props) {
@@ -82,10 +83,10 @@ function Payment(props) {
       formData.set("id_trip", trip?.id_trip);
       const response = await API.post("/transaction", formData, config);
       console.log("Add Trip success : ", response);
-      alert("Data Added");
+      Swal.fire('Data Added');
     } catch (error) {
       console.log("Add Trip failed : ", error);
-      alert("gagal");
+      Swal.fire('Gagal');
     }
   });
 

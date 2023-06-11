@@ -18,6 +18,7 @@ import {
   PrivateRouteUser,
   PrivateRouteAdmin,
 } from "./comp/privateRoute";
+import Swal from "sweetalert2";
 
 function App() {
   const [state, dispatch] = useContext(UserContext);
@@ -43,6 +44,7 @@ function App() {
       dispatch({
         type: "AUTH_ERROR",
       });
+      Swal.fire('TOKEN HABIS, HARAP LOGIN ULANG')
       setIsLoading(false);
     }
   };

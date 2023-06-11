@@ -1,5 +1,4 @@
 import {
-  Alert,
   Card,
   Carousel,
   Dialog,
@@ -24,6 +23,7 @@ import caro1 from "../assets/caro1.png";
 import caro2 from "../assets/caro2.png";
 import caro3 from "../assets/caro3.png";
 import caro4 from "../assets/caro4.png";
+import Swal from "sweetalert2";
 
 function Tour(props) {
   const [logOpen, setLogOpen] = useState(false);
@@ -96,7 +96,7 @@ function Tour(props) {
     if (add < count) {
       setAdd(add + 1);
     }else{
-      alert("FULL OM")
+      Swal.fire("FULL OM")
     }
   };
   const handleMin = () => {
@@ -191,7 +191,7 @@ function Tour(props) {
         },
         onClose: function () {
           /* You may add your own implementation here */
-          alert("you closed the popup without finishing the payment");
+          Swal.fire("you closed the popup without finishing the payment");
         },
       });
     } catch (error) {
@@ -388,7 +388,7 @@ function Tour(props) {
           <div></div>
           <button
             // onClick={handleLogin}
-            onClick={state?.isLogin === true ? (e) => paym.mutate(e) : handleLogin}
+            onClick={state?.isLogin === true && state?.user?.role_id === 2 ? (e) => paym.mutate(e) : state?.isLogin === true && state?.user?.role_id === 1 ? () => Swal.fire('Admin Tidak Bisa Memesan') : handleLogin}
             className="text-white font-semibold border border-[#FFAF00] rounded px-12 py-3 ml-2 bg-[#FFAF00]"
           >
             BOOK NOW

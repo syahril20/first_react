@@ -4,6 +4,7 @@ import Palm2 from "../../assets/modPalm2.png";
 import { useMutation } from "react-query";
 import { API } from "../../config/api";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 function Register(props) {
   const [form, setForm] = useState({
@@ -22,7 +23,7 @@ function Register(props) {
       const response = await API.post("/register", form);
       console.log("register success : ", response?.data?.data);
       props.handleRegister(false)
-      alert("REGISTER SUKSES")
+      Swal.fire("REGISTER SUKSES")
       setForm({
         name: "",
         email: "",
@@ -32,7 +33,7 @@ function Register(props) {
       });
     } catch (error) {
       console.log("register failed : ", error);
-      alert("gagal")
+      Swal.fire("gagal")
     }
   });
   return (

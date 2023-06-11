@@ -20,9 +20,7 @@ const TABLE_HEAD = [
   "No",
   "Users",
   "Trip",
-  "Bukti Transfer",
   "Status Payment",
-  "Action",
 ];
 
 export default function Admin(props) {
@@ -31,7 +29,6 @@ export default function Admin(props) {
   const [payOpen, setPayOpen] = useState(false);
   const [modal, setModal] = useState([]);
 
-  const queryClient = useQueryClient()
 
   const classes = "p-4 border-t border-[#B7B7B780] text-black text-lg";
   const [Users, setUsers] = useState([]);
@@ -178,15 +175,7 @@ export default function Admin(props) {
                         {user?.trip?.title}
                       </Typography>
                     </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {user?.attachment}
-                      </Typography>
-                    </td>
+                 
                     <td className={classes}>
                       <div className="w-max">
                         <Chip
@@ -194,28 +183,14 @@ export default function Admin(props) {
                           variant="ghost"
                           value={user?.status}
                           color={
-                            user?.status === "Approve"
+                            user?.status === "success"
                               ? "green"
-                              : user?.status === "Pending"
+                              : user?.status === "pending"
                               ? "yellow"
                               : "red"
                           }
                         />
                       </div>
-                    </td>
-
-                    <td className={classes}>
-                      <Tooltip content="Edit User">
-                        <IconButton
-                          variant="text"
-                          color="blue-gray"
-                          onClick={() => {
-                            handlePay(idx);
-                          }}
-                        >
-                          <img src={Search} className="h-4 w-4" alt="Waw" />
-                        </IconButton>
-                      </Tooltip>
                     </td>
                   </tr>
                 );
@@ -224,219 +199,7 @@ export default function Admin(props) {
           </table>
         </CardBody>
       </Card>
-      <Dialog
-        size="xl"
-        open={payOpen}
-        handler={handlePay}
-        className="bg-transparent shadow-none"
-      >
-        <div className="mb-32">
-          <div className=" bg-white ">
-            <div className="border border-[#B7B7B7] rounded-lg py-4 bg-white">
-              <div className="px-10">
-                <div
-                  id="header"
-                  className="flex justify-between items-center mb-5"
-                >
-                  <div>
-                    <img src={Icon} alt="waw" />
-                  </div>
-                  <div className="">
-                    <p className="text-3xl font-extrabold text-end mb-2">
-                      Booking
-                    </p>
-                    <p className="text-xl text-[#878787]">
-                      <b>Saturday</b>, 22 July 2020
-                    </p>
-                  </div>
-                </div>
-                <div id="content" className="flex gap-5 justify-between">
-                  <div>
-                    <p className="text-xl font-extrabold">
-                      {modal?.trip?.title}
-                    </p>
-                    <p className="text-sm text-[#959595]">
-                      {modal?.trip?.country?.name_country}
-                    </p>
-                    <p className="text-sm text-[#FF9900] mt-8 w-[120px] text-center ">
-                      <Chip
-                        size="sm"
-                        variant="ghost"
-                        value={modal?.status}
-                        color={
-                          modal?.status === "Approve"
-                            ? "green"
-                            : modal?.status === "Pending"
-                            ? "amber"
-                            : "red"
-                        }
-                      />
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap w-[300px] gap-8">
-                    <div>
-                      <div className="mb-6">
-                        <label className="font-extrabold">Date Trip</label>
-                        <p className="text-sm text-[#959595]">
-                          {modal?.trip?.date_trip}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="font-extrabold">Accomodation</label>
-                        <p className="text-sm text-[#959595]">
-                          {modal?.trip?.accomodation}
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="mb-6">
-                        <label className="font-extrabold">Duration</label>
-                        <p className="text-sm text-[#959595]">
-                          {modal?.trip?.day} Day {modal?.trip?.night} Night
-                        </p>
-                      </div>
-                      <div>
-                        <label className="font-extrabold">transportation</label>
-                        <p className="text-sm text-[#959595]">
-                          {modal?.trip?.transportation}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <img alt="waw" src={TF} className="border-2 border-black" />
-                    <p className="text-sm text-[#959595] text-center">
-                      upload payment proof
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div id="footer">
-                <table className="text-left w-full">
-                  <thead>
-                    <tr className="">
-                      {TABLE_HEADS.map((head, idx) => (
-                        <th key={idx} className="w-[100px] p-4">
-                          <div
-                            variant="small"
-                            color="blue-gray"
-                            className="leading-none text-lg font-bold"
-                          >
-                            {head}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="text-[#B1B1B1] text-lg"
-                        >
-                          1
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="text-[#B1B1B1] text-lg"
-                        >
-                          {modal?.user?.name}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="text-[#B1B1B1] text-lg"
-                        >
-                          male
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="text-[#B1B1B1] text-lg"
-                        >
-                          {modal?.user?.phone}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="text-black text-lg font-bold"
-                        >
-                          Qty :
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          as="a"
-                          className=" text-lg font-bold text-black"
-                        >
-                          {modal?.counter_qty}
-                        </Typography>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes}></td>
-                      <td className={classes}></td>
-                      <td className={classes}></td>
-                      <td className={classes}></td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="text-black text-lg font-bold"
-                        >
-                          Total :
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          as="a"
-                          className=" text-lg font-bold"
-                        >
-                          {modal?.total?.toLocaleString("en-us")}
-                        </Typography>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className="flex justify-end gap-3 mr-4">
-                  <div>
-                    <Button
-                      className="bg-[#FF0742]"
-                      onClick={() => {
-                        setModal((modal.status = "Cancel"));
-                        setPayOpen((pay) => !pay);
-                        handleApprove.mutate(modal?.id_trans);
-                        console.log(modal);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <div>
-                    <Button
-                      className="bg-[#0ACF83]"
-                      onClick={(e) => {
-                        setModal((modal.status = "Approve"));
-                        setPayOpen((pay) => !pay);
-                        handleApprove.mutate(modal.id_trans);
-                      }}
-                    >
-                      Approve
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Dialog>
+      
     </div>
   );
 }

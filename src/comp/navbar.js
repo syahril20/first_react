@@ -48,14 +48,14 @@ export default function Nav() {
       <div>
         <div className="z-20 flex items-center justify-between w-full px-20 bg-cover">
           <div id="left-nav" className="filter brightness-125">
-            <a href={state.user.role_id === 1 ? "/admin" : "/"}>
+            <a href={state?.user?.role_id === 1 ? "/admin" : "/"}>
               <img src={image} alt="me" />
             </a>
           </div>
           <div id="right-nav" className="flex items-center">
             <div className="">
               <Fragment>
-                {state.user.role_id === 2 ? (
+                {state?.user?.role_id === 2 ? (
                   <div className="relative mx-auto flex items-center text-blue-gray-900">
                     <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block"></div>
 
